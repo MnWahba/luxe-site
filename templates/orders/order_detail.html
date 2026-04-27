@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Order" %} {{ order.order_number }}{% endblock %}
+{% block content %}
+<div class="max-w-4xl mx-auto px-4 py-8">
+  <div class="flex items-center gap-4 mb-8">
+    <a href="{% url 'users:profile' %}" class="text-text-muted hover:text-primary">← {% trans "My Orders" %}</a>
+    <span class="text-text-muted">/</span>
+    <span class="text-text-primary font-bold">{{ order.order_number }}</span>
+  </div>
+
+  <div class="grid md:grid-cols-2 gap-6">
+    <div class="card p-6">
+      <h2 class="font-black text-text-primary text-lg mb-4">{% trans "Order Info" %}</h2>
+      <div class="space-y-2 text-sm">
+        <div class="flex justify-between"><span class="text-text-muted">{% trans "Order #" %}</span><span class="font-bold font-mono text-text-primary">{{ order.order_number }}</span></div>
+        <div class="flex justify-between"><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Date{% else %}التاريخ{% endif %}</span><span class="text-text-primary">{{ order.created_at|date:"M j, Y" }}</span></div>
+        <div class="flex justify-between"><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Status{% else %}الحالة{% endif %}</span><span class="badge-{{ order.status_color }}">{{ order.get_status_display }}</span></div>
+        <div class="flex justify-between"><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Payment{% else %}الدفع{% endif %}</span><span class="text-text-primary">{{ order.get_payment_method_display }}</span></div>
+        <div class="flex justify-between"><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Total{% else %}الإجمالي{% endif %}</span><span class="font-black text-primary text-lg">{{ order.total }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span></div>
+      </div>
+    </div>
+    <div class="card p-6">
+      <h2 class="font-black text-text-primary text-lg mb-4">{% if LANGUAGE_CODE == 'ar' %}Shipping Address{% else %}عنوان الشحن{% endif %}</h2>
+      <div class="text-sm text-text-muted space-y-1">
+        <p class="text-text-primary font-bold">{{ order.full_name }}</p>
+        <p>{{ order.phone }}</p>
+        <p>{{ order.address_line1 }}{% if order.address_line2 %}, {{ order.address_line2 }}{% endif %}</p>
+        <p>{{ order.city }}, {{ order.governorate }}</p>
+      </div>
+    </div>
+  </div>
+
+  <div class="card p-6 mt-6">
+    <h2 class="font-black text-text-primary text-lg mb-4">{% trans "Items" %}</h2>
+    <div class="space-y-4">
+      {% for item in order.items.all %}
+      <div class="flex items-center gap-4">
+        {% if item.image_url %}<img src="{{ item.image_url }}" class="w-14 h-14 rounded-xl object-cover flex-shrink-0"/>{% else %}<div class="w-14 h-14 rounded-xl bg-surface-2 flex items-center justify-center text-2xl flex-shrink-0">👜</div>{% endif %}
+        <div class="flex-1"><div class="font-bold text-text-primary">{{ item.product_name }}</div><div class="text-text-muted text-sm">SKU: {{ item.product_sku }}</div></div>
+        <div class="text-end"><div class="text-text-muted text-sm">× {{ item.quantity }}</div><div class="font-black text-text-primary">{{ item.total }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</div></div>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</div>
+{% endblock %}

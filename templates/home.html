@@ -1,0 +1,275 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}فانسي — حقائب وإكسسوارات{% else %}Fancy — Premium Bags & Accessories{% endif %}{% endblock %}
+
+{% block content %}
+
+<!-- ═══════ HERO ═══════ -->
+<section class="hero" id="heroSection">
+  {% if site.hero_bg_image %}
+    <!-- Custom background cover image set from Admin -->
+    <div style="position:absolute;inset:0;background-image:url('{{ site.hero_bg_image.url }}');background-size:cover;background-position:center;background-repeat:no-repeat;z-index:0;"></div>
+    {% with op=site.hero_bg_overlay %}
+    <div style="position:absolute;inset:0;background:rgba(0,0,0,{% if op >= 90 %}0.9{% elif op >= 80 %}0.8{% elif op >= 70 %}0.7{% elif op >= 60 %}0.6{% elif op >= 50 %}0.5{% elif op >= 40 %}0.4{% elif op >= 30 %}0.3{% elif op >= 20 %}0.2{% elif op >= 10 %}0.1{% else %}0{% endif %});z-index:1;"></div>
+    {% endwith %}
+  {% else %}
+    <!-- Default animated gradient background -->
+    <div class="hero-bg"></div>
+    <div class="hero-glow1"></div>
+    <div class="hero-glow2"></div>
+    <div class="hero-dots"></div>
+  {% endif %}
+  <div class="container hero-content" style="position:relative;z-index:2;" style="padding-top:56px;padding-bottom:56px;">
+    <div class="hero-layout">
+
+      <!-- Text -->
+      <div>
+        <div class="hero-eyebrow">
+          <span class="hero-eyebrow-dot"></span>
+          {% if LANGUAGE_CODE == 'ar' %}{{ site.hero_badge_ar }}{% else %}{{ site.hero_badge_en }}{% endif %}
+        </div>
+        <h1 class="hero-title">
+          {% if LANGUAGE_CODE == 'ar' %}{{ site.hero_title_ar }}{% else %}{{ site.hero_title_en }}{% endif %}<br/>
+          <span class="gradient">{% if LANGUAGE_CODE == 'ar' %}{{ site.hero_highlight_ar }}{% else %}{{ site.hero_highlight_en }}{% endif %}</span>
+        </h1>
+        <p class="hero-desc">{% if LANGUAGE_CODE == 'ar' %}{{ site.hero_subtitle_ar }}{% else %}{{ site.hero_subtitle_en }}{% endif %}</p>
+        <div style="display:flex;flex-wrap:wrap;gap:12px;margin-bottom:48px;">
+          <a href="{% url 'products:list' %}" class="btn btn-primary" style="font-size:15px;padding:0 32px;height:52px;">
+            {% if LANGUAGE_CODE == 'ar' %}تسوقي الآن{% else %}Shop Now{% endif %}
+            <svg width="18" height="18" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M17 8l4 4m0 0l-4 4m4-4H3"/></svg>
+          </a>
+          <button type="button" onclick="scrollToFeatured()" class="btn btn-ghost" style="font-size:15px;padding:0 32px;height:52px;">
+            {% if LANGUAGE_CODE == 'ar' %}عرض المجموعة{% else %}View Collection{% endif %}
+          </button>
+        </div>
+        <!-- Stats — real numbers -->
+        <div class="hero-stats">
+          <div>
+            <span class="stat-val text-gradient">{{ stat_products_count }}+</span>
+            <span class="stat-lbl">{% if LANGUAGE_CODE == 'ar' %}منتج{% else %}Products{% endif %}</span>
+          </div>
+          <div class="stat-div"></div>
+          <div>
+            <span class="stat-val text-gradient">{{ site.stat_customers }}</span>
+            <span class="stat-lbl">{% if LANGUAGE_CODE == 'ar' %}عميل{% else %}Customers{% endif %}</span>
+          </div>
+          <div class="stat-div"></div>
+          <div>
+            <span class="stat-val" style="color:var(--warning);">★ {{ site.stat_rating }}</span>
+            <span class="stat-lbl">{% if LANGUAGE_CODE == 'ar' %}تقييم{% else %}Rating{% endif %}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Hero Visual — product image OR default -->
+      <div class="hero-visual-col">
+        <div style="position:relative;width:360px;height:360px;">
+          <div style="position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,0.2) 0%,transparent 70%);"></div>
+          {% if site.hero_image %}
+          <!-- Real product/banner image set from Admin -->
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;">
+            <img src="{{ site.hero_image.url }}" alt="Hero"
+              style="width:300px;height:300px;object-fit:contain;filter:drop-shadow(0 0 40px rgba(139,92,246,0.5));border-radius:20px;"/>
+          </div>
+          {% else %}
+          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:12px;">
+            <div style="font-size:100px;line-height:1;filter:drop-shadow(0 0 40px rgba(139,92,246,0.5));">👜</div>
+            <span style="font-size:12px;font-weight:900;color:var(--t3);letter-spacing:.12em;text-transform:uppercase;">{% if LANGUAGE_CODE == 'ar' %}مجموعة فاخرة{% else %}Premium Collection{% endif %}</span>
+          </div>
+          {% endif %}
+          <!-- Floating badges -->
+          <div style="position:absolute;top:-8px;right:-16px;background:var(--s2);border:1px solid var(--success);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:900;color:var(--success);white-space:nowrap;box-shadow:0 8px 24px rgba(22,163,74,0.2);">
+            ✓ {% if LANGUAGE_CODE == 'ar' %}توصيل مجاني{% else %}Free Delivery{% endif %}
+          </div>
+          <div style="position:absolute;bottom:16px;left:-24px;background:var(--s2);border:1px solid var(--warning);border-radius:10px;padding:10px 16px;font-size:13px;font-weight:900;color:var(--warning);white-space:nowrap;box-shadow:0 8px 24px rgba(217,119,6,0.2);">
+            ⚡ {% if LANGUAGE_CODE == 'ar' %}شحن سريع{% else %}Fast Shipping{% endif %}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CATEGORIES ═══════ -->
+{% if categories %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-eyebrow">{% if LANGUAGE_CODE == 'ar' %}تصفحي{% else %}Browse{% endif %}</span>
+        <h2 class="section-title">{% if LANGUAGE_CODE == 'ar' %}تسوقي حسب الفئة{% else %}Shop by Category{% endif %}</h2>
+      </div>
+      <a href="{% url 'products:list' %}" class="btn btn-ghost btn-sm">{% if LANGUAGE_CODE == 'ar' %}عرض الكل{% else %}View All{% endif %}</a>
+    </div>
+    <div class="cats-grid">
+      {% for cat in categories %}
+      <a href="{% url 'products:category' cat.slug %}" class="cat-card">
+        {% if cat.image %}<img src="{{ cat.image.url }}" alt="{{ cat.get_name }}" class="cat-img"/>
+        {% else %}<div class="cat-icon">👜</div>{% endif %}
+        <span class="cat-label">{{ cat.get_name }}</span>
+      </a>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════ FEATURED ═══════ -->
+{% if featured_products %}
+<section class="section" id="featured">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-eyebrow">✦ {% if LANGUAGE_CODE == 'ar' %}مميزة{% else %}Featured{% endif %}</span>
+        <h2 class="section-title">{% if LANGUAGE_CODE == 'ar' %}{{ site.featured_title_ar }}{% else %}{{ site.featured_title_en }}{% endif %}</h2>
+      </div>
+      <a href="{% url 'products:list' %}" class="btn btn-ghost btn-sm">{% if LANGUAGE_CODE == 'ar' %}عرض الكل{% else %}See All{% endif %}</a>
+    </div>
+    <div class="product-grid">
+      {% for product in featured_products %}{% include "products/_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════ PROMO BANNER ═══════ -->
+{% if site.promo_active %}
+<section class="section">
+  <div class="container">
+    <div class="promo-banner" {% if site.promo_bg_image %}style="background-image:url('{{ site.promo_bg_image.url }}');background-size:cover;background-position:center;background-repeat:no-repeat;"{% endif %}>
+      {% if site.promo_bg_image %}
+      <!-- Custom background with overlay -->
+      {% with op=site.promo_bg_overlay_opacity %}
+      <div style="position:absolute;inset:0;background:rgba(0,0,0,{% if op >= 90 %}0.9{% elif op >= 80 %}0.8{% elif op >= 70 %}0.7{% elif op >= 60 %}0.6{% elif op >= 50 %}0.5{% elif op >= 40 %}0.4{% elif op >= 30 %}0.3{% elif op >= 20 %}0.2{% elif op >= 10 %}0.1{% else %}0{% endif %});border-radius:24px;z-index:0;"></div>
+      {% endwith %}
+      {% else %}
+      <div class="promo-glow-left"></div>
+      <div class="promo-glow-right"></div>
+      <div class="promo-grid-overlay"></div>
+      {% endif %}
+      <div class="promo-inner">
+        <div>
+          <div class="badge badge-secondary" style="margin-bottom:16px;font-size:13px;padding:6px 16px;">🔥 {% if LANGUAGE_CODE == 'ar' %}عرض محدود{% else %}Limited Time Offer{% endif %}</div>
+          <h2 class="promo-title">
+            {% if LANGUAGE_CODE == 'ar' %}خصم حتى{% else %}Up to{% endif %}
+            <span class="text-gradient">{{ site.promo_discount_percentage }}% OFF</span><br/>
+            <span style="color:var(--t2);font-weight:400;font-size:clamp(20px,3vw,32px);">{% if LANGUAGE_CODE == 'ar' %}{{ site.promo_title_ar }}{% else %}{{ site.promo_title_en }}{% endif %}</span>
+          </h2>
+          <p style="color:var(--t2);font-size:16px;margin-bottom:24px;margin-top:12px;">
+            {% if LANGUAGE_CODE == 'ar' %}{{ site.promo_subtitle_ar }}{% else %}{{ site.promo_subtitle_en }}{% endif %}
+          </p>
+          <div style="display:flex;flex-wrap:wrap;align-items:center;gap:12px;">
+            <a href="{% url 'products:list' %}" class="btn btn-secondary" style="font-size:15px;height:50px;padding:0 28px;">
+              {% if LANGUAGE_CODE == 'ar' %}اطلبي الآن{% else %}Grab the Deal{% endif %} →
+            </a>
+            {% if site.promo_coupon_code %}
+            <div style="display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.04);border:1px solid var(--s3);border-radius:10px;padding:0 16px;height:50px;">
+              <span style="font-size:12px;color:var(--t3);">{% if LANGUAGE_CODE == 'ar' %}كود:{% else %}Use code:{% endif %}</span>
+              <span style="font-family:var(--font-mono);font-size:15px;font-weight:900;color:var(--primary);letter-spacing:0.05em;">{{ site.promo_coupon_code }}</span>
+            </div>
+            {% endif %}
+          </div>
+        </div>
+        <!-- Promo image or emoji -->
+        <div class="promo-emoji">
+          {% if site.promo_image %}
+          <img src="{{ site.promo_image.url }}" alt="Promo" style="width:200px;height:200px;object-fit:contain;filter:drop-shadow(0 0 30px rgba(244,63,94,0.3));"/>
+          {% else %}🛍️{% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════ NEW ARRIVALS ═══════ -->
+{% if new_arrivals %}
+<section class="section">
+  <div class="container">
+    <div class="section-header">
+      <div>
+        <span class="section-eyebrow">🆕 {% if LANGUAGE_CODE == 'ar' %}وصل حديثاً{% else %}Just In{% endif %}</span>
+        <h2 class="section-title">{% if LANGUAGE_CODE == 'ar' %}{{ site.new_arrivals_title_ar }}{% else %}{{ site.new_arrivals_title_en }}{% endif %}</h2>
+      </div>
+    </div>
+    <div class="product-grid">
+      {% for product in new_arrivals %}{% include "products/_card.html" %}{% endfor %}
+    </div>
+  </div>
+</section>
+{% endif %}
+
+<!-- ═══════ WHY US ═══════ -->
+<section class="section" style="padding-bottom:64px;">
+  <div class="container">
+    <div style="text-align:center;margin-bottom:40px;">
+      <span class="section-eyebrow">{% if LANGUAGE_CODE == 'ar' %}وعدنا{% else %}Our Promise{% endif %}</span>
+      <h2 class="section-title">{% if LANGUAGE_CODE == 'ar' %}لماذا فانسي؟{% else %}Why Fancy?{% endif %}</h2>
+    </div>
+    <div class="why-grid">
+      <div class="why-card"><div class="why-icon" style="background:rgba(139,92,246,0.1);color:var(--primary);">🚚</div>
+        <h3 class="why-title">{% if LANGUAGE_CODE == 'ar' %}توصيل سريع{% else %}Fast Delivery{% endif %}</h3>
+        <p class="why-desc">{% if LANGUAGE_CODE == 'ar' %}توصيل لبابك خلال 2-5 أيام عمل{% else %}Delivered to your door in 2–5 business days{% endif %}</p></div>
+      <div class="why-card"><div class="why-icon" style="background:rgba(244,63,94,0.1);color:var(--secondary);">💎</div>
+        <h3 class="why-title">{% if LANGUAGE_CODE == 'ar' %}جودة فاخرة{% else %}Premium Quality{% endif %}</h3>
+        <p class="why-desc">{% if LANGUAGE_CODE == 'ar' %}كل منتج مختار بعناية وجودة مضمونة{% else %}Every product hand-curated and quality-checked{% endif %}</p></div>
+      <div class="why-card"><div class="why-icon" style="background:rgba(22,163,74,0.1);color:var(--success);">🔒</div>
+        <h3 class="why-title">{% if LANGUAGE_CODE == 'ar' %}دفع آمن{% else %}Secure Payment{% endif %}</h3>
+        <p class="why-desc">{% if LANGUAGE_CODE == 'ar' %}بياناتك ومدفوعاتك محمية دائماً{% else %}Your data and payments are always protected{% endif %}</p></div>
+      <div class="why-card"><div class="why-icon" style="background:rgba(217,119,6,0.1);color:var(--warning);">💬</div>
+        <h3 class="why-title">{% if LANGUAGE_CODE == 'ar' %}دعم على مدار الساعة{% else %}24/7 Support{% endif %}</h3>
+        <p class="why-desc">{% if LANGUAGE_CODE == 'ar' %}نحن هنا متى احتجت مساعدة{% else %}We're here via WhatsApp whenever you need{% endif %}</p></div>
+    </div>
+  </div>
+</section>
+
+<style>
+.hero-layout { display:grid; grid-template-columns:1fr; gap:48px; align-items:center; }
+.hero-visual-col { display:none; align-items:center; justify-content:center; }
+.cats-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; }
+.cat-card { background:var(--s2);border:1px solid var(--s3);border-radius:16px;padding:20px 12px;text-align:center;text-decoration:none;transition:all .2s cubic-bezier(.4,0,.2,1);display:flex;flex-direction:column;align-items:center;gap:10px; }
+.cat-card:hover { border-color:rgba(139,92,246,.5);transform:translateY(-4px);box-shadow:0 16px 40px rgba(0,0,0,.3); }
+.cat-img { width:52px;height:52px;object-fit:cover;border-radius:10px; }
+.cat-icon { width:52px;height:52px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:26px;background:linear-gradient(135deg,rgba(139,92,246,.15),rgba(244,63,94,.1)); }
+.cat-label { font-size:13px;font-weight:900;color:var(--t1); }
+.promo-banner { position:relative;border-radius:24px;overflow:hidden;background:var(--s1);border:1px solid var(--s3); }
+.promo-glow-left { position:absolute;width:500px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(139,92,246,.18) 0%,transparent 70%);top:-100px;left:-100px;pointer-events:none; }
+.promo-glow-right { position:absolute;width:400px;height:400px;border-radius:50%;background:radial-gradient(circle,rgba(244,63,94,.12) 0%,transparent 70%);bottom:-100px;right:-100px;pointer-events:none; }
+.promo-grid-overlay { position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px);background-size:32px 32px; }
+.promo-inner { position:relative;z-index:1;padding:40px 32px;display:grid;grid-template-columns:1fr;gap:24px;align-items:center; }
+.promo-title { font-size:clamp(28px,6vw,52px);font-weight:900;color:var(--t1);line-height:1.05; }
+.promo-emoji { display:none;font-size:80px;filter:drop-shadow(0 0 40px rgba(244,63,94,.4));text-align:center; }
+.why-grid { display:grid;grid-template-columns:repeat(2,1fr);gap:16px; }
+.why-card { background:var(--s2);border:1px solid var(--s3);border-radius:16px;padding:28px 24px;transition:all .2s ease; }
+.why-card:hover { border-color:rgba(139,92,246,.3);transform:translateY(-3px); }
+.why-icon { width:52px;height:52px;border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:24px;margin-bottom:16px; }
+.why-title { font-size:16px;font-weight:900;color:var(--t1);margin-bottom:8px; }
+.why-desc { font-size:13px;color:var(--t2);line-height:1.6; }
+@media(min-width:768px){
+  .hero-layout{grid-template-columns:1fr 1fr;}
+  .hero-visual-col{display:flex;}
+  .cats-grid{grid-template-columns:repeat(6,1fr);}
+  .promo-inner{grid-template-columns:1fr auto;}
+  .promo-emoji{display:block;}
+  .why-grid{grid-template-columns:repeat(4,1fr);}
+}
+</style>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function scrollToFeatured() {
+  var el = document.getElementById('featured');
+  if (!el) {
+    // If no featured products, scroll to categories
+    el = document.querySelector('.cats-grid') || document.querySelector('.section');
+  }
+  if (el) {
+    var offset = 120; // navbar + catbar height
+    var top = el.getBoundingClientRect().top + window.pageYOffset - offset;
+    window.scrollTo({ top: top, behavior: 'smooth' });
+  }
+}
+</script>
+{% endblock %}

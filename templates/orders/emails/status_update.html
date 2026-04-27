@@ -1,0 +1,9 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="background:#09090B;color:#FAFAFA;font-family:Arial,sans-serif;padding:40px 20px;">
+<div style="max-width:600px;margin:0 auto;background:#18181B;border-radius:16px;overflow:hidden;">
+<div style="background:linear-gradient(135deg,#8B5CF6,#F43F5E);padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-weight:900;">✦ Fancy فانسي</h1></div>
+<div style="padding:32px;">
+<h2 style="color:#FAFAFA;">Order Status Updated</h2>
+<p style="color:#A1A1AA;">Hi {{ order.full_name }}, your order <strong style="color:#8B5CF6;">{{ order.order_number }}</strong> status has been updated to:</p>
+<div style="text-align:center;margin:24px 0;"><span style="background:#8B5CF6;color:white;padding:12px 32px;border-radius:10px;font-weight:700;font-size:18px;">{{ order.get_status_display }}</span></div>
+{% if order.tracking_number %}<p style="color:#A1A1AA;">Tracking number: <strong style="color:#FAFAFA;">{{ order.tracking_number }}</strong></p>{% endif %}
+</div></div></body></html>

@@ -1,0 +1,924 @@
+{% load i18n static %}
+<!DOCTYPE html>
+<html lang="{{ LANGUAGE_CODE }}" dir="{% if LANGUAGE_CODE == 'ar' %}rtl{% else %}ltr{% endif %}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <meta name="theme-color" content="#09090B"/>
+  <meta name="color-scheme" content="dark"/>
+  <meta name="description" content="{% block meta_description %}{% if LANGUAGE_CODE == 'ar' %}فانسي - حقائب وإكسسوارات نسائية فاخرة{% else %}Fancy - Premium Women's Bags & Accessories{% endif %}{% endblock %}"/>
+  <title>{% block title %}{% if LANGUAGE_CODE == 'ar' %}فانسي{% else %}Fancy{% endif %}{% endblock %} | {% if LANGUAGE_CODE == 'ar' %}✦ فانسي{% else %}✦ Fancy{% endif %}</title>
+
+  <!-- Favicon -->
+  <link rel="icon" type="image/x-icon" href="{% static 'icons/favicon.ico' %}"/>
+  <link rel="icon" type="image/svg+xml" href="{% static 'icons/favicon.svg' %}"/>
+  <link rel="icon" type="image/png" sizes="32x32" href="{% static 'icons/favicon-32.png' %}"/>
+  <link rel="icon" type="image/png" sizes="16x16" href="{% static 'icons/favicon-16.png' %}"/>
+  <link rel="apple-touch-icon" sizes="180x180" href="{% static 'icons/apple-touch-icon.png' %}"/>
+  <link rel="manifest" href="{% static 'manifest.json' %}"/>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;900&family=Cairo:wght@400;600;700;900&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet"/>
+
+  <!-- Tailwind -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            primary:'#8B5CF6', secondary:'#F43F5E',
+            success:'#16A34A', warning:'#D97706', danger:'#DC2626',
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    /* ═══════════════════════════════════════════
+       DRAMATIC DESIGN SYSTEM — FANCY فانسي
+       Primary #8B5CF6 | Secondary #F43F5E
+       Surface #09090B | Text #FAFAFA
+       Font: Outfit (EN) + Cairo (AR)
+    ═══════════════════════════════════════════ */
+    :root {
+      --primary: #8B5CF6;
+      --primary-dark: #6D28D9;
+      --secondary: #F43F5E;
+      --secondary-dark: #E11D48;
+      --success: #16A34A;
+      --warning: #D97706;
+      --danger: #DC2626;
+      --bg: #09090B;
+      --s1: #0F0F12;
+      --s2: #18181B;
+      --s3: #27272A;
+      --s4: #3F3F46;
+      --t1: #FAFAFA;
+      --t2: #A1A1AA;
+      --t3: #71717A;
+      --font-en: 'Outfit', sans-serif;
+      --font-ar: 'Cairo', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+      --ease: cubic-bezier(0.4, 0, 0.2, 1);
+      --glow-primary: 0 0 40px rgba(139,92,246,0.3);
+      --glow-secondary: 0 0 40px rgba(244,63,94,0.3);
+    }
+
+    /* ── Reset ── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; -webkit-text-size-adjust: 100%; }
+
+    /* ── Dark mode always on ── */
+    html, body {
+      background: var(--bg) !important;
+      color: var(--t1) !important;
+      color-scheme: dark;
+    }
+    body {
+      font-family: var(--font-en);
+      font-size: 15px;
+      line-height: 1.6;
+      min-height: 100vh;
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+    html[dir="rtl"] body { font-family: var(--font-ar); }
+
+    /* ── Typography ── */
+    h1, h2, h3, h4, h5, h6 {
+      font-weight: 900;
+      line-height: 1.1;
+      letter-spacing: -0.02em;
+      color: var(--t1);
+    }
+    p { color: var(--t2); line-height: 1.65; }
+    a { color: inherit; text-decoration: none; }
+
+    /* ── Buttons ── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 900;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.2s var(--ease);
+      text-decoration: none;
+      white-space: nowrap;
+      min-height: 44px;
+      padding: 0 20px;
+      outline: none;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    .btn:focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: var(--primary-dark); transform: translateY(-2px); box-shadow: var(--glow-primary); }
+    .btn-primary:active { transform: translateY(0); box-shadow: none; }
+    .btn-secondary { background: var(--secondary); color: #fff; }
+    .btn-secondary:hover { background: var(--secondary-dark); transform: translateY(-2px); box-shadow: var(--glow-secondary); }
+    .btn-ghost {
+      background: transparent;
+      color: var(--t1);
+      border: 1px solid var(--s3);
+    }
+    .btn-ghost:hover { border-color: var(--primary); color: var(--primary); background: rgba(139,92,246,0.06); }
+    .btn-sm { min-height: 36px; padding: 0 14px; font-size: 13px; border-radius: 8px; }
+    .btn-icon { padding: 0 !important; width: 44px; height: 44px; border-radius: 10px; }
+    .btn-icon.btn-sm { width: 36px; height: 36px; border-radius: 8px; }
+
+    /* ── Inputs ── */
+    .form-input, .input {
+      width: 100%;
+      background: var(--s2) !important;
+      border: 1.5px solid var(--s3);
+      border-radius: 10px;
+      padding: 11px 16px;
+      color: var(--t1) !important;
+      font-family: inherit;
+      font-size: 15px;
+      font-weight: 400;
+      transition: border-color 0.2s, box-shadow 0.2s;
+      outline: none;
+      display: block;
+      -webkit-appearance: none;
+    }
+    .form-input::placeholder, .input::placeholder { color: var(--t3); }
+    .form-input:focus, .input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(139,92,246,0.15);
+    }
+    .form-input:disabled { opacity: 0.4; cursor: not-allowed; }
+    select.form-input, select.input { cursor: pointer; }
+    textarea.form-input, textarea.input { resize: vertical; min-height: 96px; }
+
+    /* ── Cards ── */
+    .card {
+      background: var(--s2);
+      border: 1px solid var(--s3);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.22s var(--ease);
+    }
+    .card-hover:hover {
+      border-color: rgba(139,92,246,0.4);
+      transform: translateY(-5px);
+      box-shadow: 0 24px 48px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.08);
+    }
+
+    /* ── Badges ── */
+    .badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 10px;
+      border-radius: 99px;
+      border: 1px solid transparent;
+    }
+    .badge-primary   { background: rgba(139,92,246,.12); color: var(--primary);   border-color: rgba(139,92,246,.25); }
+    .badge-secondary { background: rgba(244,63,94,.12);  color: var(--secondary);  border-color: rgba(244,63,94,.25); }
+    .badge-success   { background: rgba(22,163,74,.12);  color: var(--success);    border-color: rgba(22,163,74,.25); }
+    .badge-warning   { background: rgba(217,119,6,.12);  color: var(--warning);    border-color: rgba(217,119,6,.25); }
+    .badge-danger    { background: rgba(220,38,38,.12);  color: var(--danger);     border-color: rgba(220,38,38,.25); }
+
+    /* ── Toasts ── */
+    #toast-wrap {
+      position: fixed;
+      top: 80px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      pointer-events: none;
+      max-width: 360px;
+      width: calc(100vw - 40px);
+    }
+    html[dir="rtl"] #toast-wrap { right: auto; left: 20px; }
+    .toast {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 13px 18px;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 14px;
+      border: 1px solid transparent;
+      pointer-events: all;
+      animation: toast-in 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+      box-shadow: 0 8px 32px rgba(0,0,0,0.5);
+    }
+    @keyframes toast-in  { from { opacity:0; transform:translateX(110%) } to { opacity:1; transform:translateX(0) } }
+    @keyframes toast-out { to   { opacity:0; transform:translateY(-8px) scale(.96) } }
+    .toast-out { animation: toast-out 0.25s ease forwards; }
+    .toast-success { background:#052e16; border-color:var(--success); color:#86efac; }
+    .toast-error   { background:#450a0a; border-color:var(--danger);  color:#fca5a5; }
+    .toast-info    { background:#1e1b4b; border-color:var(--primary); color:#c4b5fd; }
+    .toast-warning { background:#422006; border-color:var(--warning); color:#fcd34d; }
+    .toast-icon { font-size:16px; flex-shrink:0; }
+
+    /* ── Nav ── */
+    .topbar {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      background: rgba(9,9,11,0.88);
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
+      border-bottom: 1px solid var(--s3);
+    }
+    .topbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: 16px;
+    }
+
+    /* ── Logo ── */
+    .logo-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      flex-shrink: 0;
+    }
+    .logo-icon {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      overflow: hidden;
+      flex-shrink: 0;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .logo-icon img { width: 100%; height: 100%; object-fit: contain; }
+    .logo-text-en {
+      font-family: var(--font-en);
+      font-size: 20px;
+      font-weight: 900;
+      color: var(--t1);
+      letter-spacing: -0.02em;
+      line-height: 1;
+    }
+    .logo-text-ar {
+      font-family: var(--font-ar);
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t3);
+      line-height: 1;
+    }
+    html[dir="rtl"] .logo-text-en { font-size: 18px; }
+
+    /* ── Search ── */
+    .search-form {
+      flex: 1;
+      max-width: 400px;
+      display: none;
+    }
+    @media(min-width:768px) { .search-form { display: block; } }
+    .search-wrap { position: relative; }
+    .search-input {
+      width: 100%;
+      background: var(--s2) !important;
+      border: 1.5px solid var(--s3);
+      border-radius: 10px;
+      padding: 9px 16px 9px 40px;
+      color: var(--t1) !important;
+      font-size: 14px;
+      outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    html[dir="rtl"] .search-input { padding: 9px 40px 9px 16px; }
+    .search-input::placeholder { color: var(--t3); }
+    .search-input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(139,92,246,0.12); }
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--t3);
+      width: 16px; height: 16px;
+      pointer-events: none;
+    }
+    html[dir="rtl"] .search-icon { left: auto; right: 12px; }
+
+    /* ── Category bar ── */
+    .catbar {
+      position: fixed;
+      top: 64px; left: 0; right: 0;
+      z-index: 99;
+      background: rgba(15,15,18,0.9);
+      backdrop-filter: blur(20px);
+      border-bottom: 1px solid var(--s3);
+    }
+    .catbar-inner {
+      max-width: 1280px;
+      margin: 0 auto;
+      padding: 0 24px;
+      display: flex;
+      gap: 4px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      height: 44px;
+      align-items: center;
+    }
+    .catbar-inner::-webkit-scrollbar { display: none; }
+    .cat-pill {
+      flex-shrink: 0;
+      padding: 6px 14px;
+      border-radius: 99px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t2);
+      transition: all 0.18s ease;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+    .cat-pill:hover { color: var(--primary); background: rgba(139,92,246,0.1); }
+    .cat-pill.active { color: var(--primary); background: rgba(139,92,246,0.12); }
+
+    /* ── Lang switcher ── */
+    .lang-btn {
+      display: none;
+      align-items: center;
+      gap: 6px;
+      background: var(--s2);
+      border: 1.5px solid var(--s3);
+      border-radius: 8px;
+      padding: 6px 12px;
+      font-size: 13px;
+      font-weight: 900;
+      color: var(--t2);
+      cursor: pointer;
+      transition: all 0.18s ease;
+      font-family: inherit;
+    }
+    /* lang-btn always visible */
+    .lang-btn:hover { border-color: var(--primary); color: var(--primary); }
+
+    /* ── User dropdown ── */
+    .user-menu { position: relative; display: none; }
+    @media(min-width:640px) { .user-menu { display: block; } }
+    .user-avatar {
+      width: 36px; height: 36px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 14px;
+      font-weight: 900;
+      color: #fff;
+      cursor: pointer;
+      border: none;
+      transition: all 0.18s ease;
+    }
+    .user-avatar:hover { transform: scale(1.08); box-shadow: var(--glow-primary); }
+    .user-dropdown {
+      display: none;
+      position: absolute;
+      top: calc(100% + 10px);
+      right: 0;
+      width: 210px;
+      background: var(--s2);
+      border: 1px solid var(--s3);
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: 0 24px 48px rgba(0,0,0,0.6);
+      z-index: 200;
+    }
+    html[dir="rtl"] .user-dropdown { right: auto; left: 0; }
+    .user-dropdown.open { display: block; animation: dropdown-in 0.18s ease; }
+    @keyframes dropdown-in { from { opacity:0; transform:translateY(-8px) scale(.97) } to { opacity:1; transform:none } }
+    .dropdown-head { padding: 14px 16px; border-bottom: 1px solid var(--s3); }
+    .dropdown-name { font-size: 14px; font-weight: 900; color: var(--t1); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+    .dropdown-email { font-size: 12px; color: var(--t3); overflow:hidden; text-overflow:ellipsis; white-space:nowrap; margin-top:2px; }
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 11px 16px;
+      font-size: 13px;
+      font-weight: 700;
+      color: var(--t1);
+      text-decoration: none;
+      transition: background 0.15s;
+    }
+    .dropdown-item:hover { background: var(--s3); }
+    .dropdown-item.danger { color: var(--danger); }
+    .dropdown-item.danger:hover { background: rgba(220,38,38,0.1); }
+    .dropdown-divider { height: 1px; background: var(--s3); }
+
+    /* ── Product card ── */
+    .product-card {
+      background: var(--s2);
+      border: 1px solid var(--s3);
+      border-radius: 16px;
+      overflow: hidden;
+      transition: all 0.22s var(--ease);
+    }
+    .product-card:hover {
+      border-color: rgba(139,92,246,0.45);
+      transform: translateY(-6px);
+      box-shadow: 0 32px 64px rgba(0,0,0,0.5), 0 0 0 1px rgba(139,92,246,0.08);
+    }
+    .product-card .product-img {
+      position: relative;
+      overflow: hidden;
+      aspect-ratio: 1;
+      background: var(--s1);
+    }
+    .product-card .product-img img {
+      width: 100%; height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s var(--ease), opacity 0.3s;
+      opacity: 0;
+    }
+    .product-card .product-img img.loaded { opacity: 1; }
+    .product-card:hover .product-img img { transform: scale(1.07); }
+    .product-card .img-placeholder {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 56px;
+      color: var(--t4, #52525B);
+    }
+    .product-card .badges {
+      position: absolute;
+      top: 10px; left: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      z-index: 1;
+    }
+    html[dir="rtl"] .product-card .badges { left: auto; right: 10px; }
+    .product-card .wish-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      z-index: 1;
+    }
+    html[dir="rtl"] .product-card .wish-btn { right: auto; left: 10px; }
+    .product-body { padding: 14px; }
+    .product-cat   { font-size: 11px; color: var(--t3); font-weight: 600; margin-bottom: 4px; }
+    .product-name  { font-size: 14px; font-weight: 900; color: var(--t1); line-height: 1.3; margin-bottom: 8px; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+    .product-footer { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+    .price-main { font-size: 18px; font-weight: 900; color: var(--t1); }
+    .price-old  { font-size: 13px; color: var(--t3); text-decoration: line-through; }
+
+    /* ── Hero ── */
+    .hero { position: relative; overflow: hidden; min-height: 90vh; display: flex; align-items: center; }
+    .hero-bg    { position: absolute; inset: 0; background: var(--bg); }
+    .hero-glow1 { position: absolute; width: 600px; height: 600px; border-radius: 50%; background: radial-gradient(circle,rgba(139,92,246,.18) 0%,transparent 70%); top: -150px; left: -100px; pointer-events:none; }
+    .hero-glow2 { position: absolute; width: 500px; height: 500px; border-radius: 50%; background: radial-gradient(circle,rgba(244,63,94,.12) 0%,transparent 70%); bottom:-100px; right:-80px; pointer-events:none; }
+    .hero-dots  { position: absolute; inset: 0; background-image: linear-gradient(rgba(255,255,255,.018) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.018) 1px,transparent 1px); background-size:40px 40px; pointer-events:none; }
+    .hero-content { position: relative; z-index: 1; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; font-size:12px; font-weight:900; color:var(--primary); background:rgba(139,92,246,.1); border:1px solid rgba(139,92,246,.22); border-radius:99px; padding:5px 14px; margin-bottom:20px; }
+    .hero-eyebrow-dot { width:6px; height:6px; border-radius:50%; background:var(--primary); animation:pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+    .hero-title { font-size: clamp(36px,8vw,72px); font-weight:900; line-height:1.0; letter-spacing:-0.03em; color:var(--t1); margin-bottom:20px; }
+    .hero-title .gradient { background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+    .hero-desc  { font-size:17px; color:var(--t2); max-width:520px; line-height:1.7; margin-bottom:32px; }
+    .hero-stats { display:flex; align-items:center; gap:32px; }
+    .stat-val   { font-size:22px; font-weight:900; color:var(--t1); display:block; }
+    .stat-lbl   { font-size:11px; color:var(--t3); font-weight:700; text-transform:uppercase; letter-spacing:.06em; }
+    .stat-div   { width:1px; height:36px; background:var(--s3); }
+
+    /* ── Section ── */
+    .section { padding: 56px 0; }
+    .container { max-width:1280px; margin:0 auto; padding:0 24px; }
+    .section-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:32px; gap:16px; flex-wrap:wrap; }
+    .section-eyebrow { font-size:12px; font-weight:900; color:var(--primary); display:block; margin-bottom:6px; text-transform:uppercase; letter-spacing:.08em; }
+    .section-title   { font-size:clamp(24px,4vw,32px); font-weight:900; color:var(--t1); line-height:1; }
+
+    /* ── Product Grid ── */
+    .product-grid { display:grid; gap:16px; grid-template-columns:repeat(2,1fr); }
+    @media(min-width:640px) { .product-grid { grid-template-columns:repeat(3,1fr); } }
+    @media(min-width:1024px){ .product-grid { grid-template-columns:repeat(4,1fr); } }
+
+    /* ── Text gradient ── */
+    .text-gradient { background:linear-gradient(135deg,var(--primary),var(--secondary)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; }
+
+    /* ── Skeleton ── */
+    .skeleton { background:linear-gradient(90deg,var(--s2) 25%,var(--s3) 50%,var(--s2) 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
+    @keyframes shimmer { from{background-position:200% 0} to{background-position:-200% 0} }
+
+    /* ── Footer ── */
+    .footer { border-top:1px solid var(--s3); background:var(--s1); margin-top:56px; }
+
+    /* ── Mobile Bottom Nav ── */
+    @media(max-width:767px) {
+      body { padding-bottom:72px; }
+    }
+    .mobile-nav {
+      display: none;
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      z-index: 100;
+      background: rgba(15,15,18,0.97);
+      backdrop-filter: blur(24px);
+      border-top: 1px solid var(--s3);
+      grid-template-columns: repeat(5, 1fr);
+    }
+    @media(max-width:767px) { .mobile-nav { display: grid; } }
+    .mob-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 3px;
+      padding: 10px 6px;
+      font-size: 10px;
+      font-weight: 900;
+      color: var(--t2);
+      text-decoration: none;
+      transition: color 0.18s;
+    }
+    .mob-item svg { width:22px; height:22px; }
+    .mob-item:hover, .mob-item.active { color: var(--primary); }
+
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width:6px; height:6px; }
+    ::-webkit-scrollbar-track { background:var(--bg); }
+    ::-webkit-scrollbar-thumb { background:var(--s4); border-radius:3px; }
+    ::-webkit-scrollbar-thumb:hover { background:var(--t3); }
+
+    /* ── Form label ── */
+    .form-label { display:block; font-size:13px; font-weight:900; color:var(--t2); margin-bottom:6px; }
+    .form-error { font-size:12px; color:var(--danger); margin-top:5px; font-weight:700; }
+    .form-group { margin-bottom:18px; }
+  </style>
+
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body class="dark">
+
+<!-- ═══════════════ TOP BAR ═══════════════ -->
+<header class="topbar" role="banner">
+  <div class="topbar-inner">
+
+    <!-- Logo -->
+    <a href="{% url 'home' %}" class="logo-link" aria-label="{% if LANGUAGE_CODE == 'ar' %}فانسي - الرئيسية{% else %}Fancy - Home{% endif %}">
+      {% comment %}Logo: Place your logo as static/icons/custom_logo.png to override{% endcomment %}
+      <img src="{% static 'icons/logo_44h.png' %}" 
+           alt="{% if LANGUAGE_CODE == 'ar' %}فانسي — فاشون براندز{% else %}Fancy — Fashion Brands &amp; Accessories{% endif %}" 
+           height="44" 
+           style="height:44px;width:auto;display:block;filter:drop-shadow(0 0 8px rgba(139,92,246,0.3));"
+           onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+      <!-- Fallback inline SVG if file fails to load -->
+      <div style="display:none;align-items:center;gap:8px;" class="logo-fallback">
+        <div style="width:38px;height:38px;border-radius:9px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);display:flex;align-items:center;justify-content:center;flex-shrink:0;" aria-hidden="true">
+          <svg viewBox="0 0 64 64" fill="none" width="38" height="38">
+            <rect x="15" y="13" width="9" height="30" rx="2.5" fill="white"/>
+            <rect x="15" y="13" width="26" height="9" rx="2.5" fill="white"/>
+            <rect x="15" y="26" width="19" height="8" rx="2.5" fill="white"/>
+            <circle cx="46" cy="41" r="5" fill="#F43F5E"/>
+          </svg>
+        </div>
+        <div>
+          <div style="font-family:var(--font-en);font-size:19px;font-weight:900;color:var(--t1);line-height:1;">Fancy</div>
+          <div style="font-family:var(--font-ar);font-size:12px;font-weight:700;color:var(--t3);line-height:1;">فانسي</div>
+        </div>
+      </div>
+    </a>
+
+    <!-- Search -->
+    <form action="{% url 'products:search' %}" method="get" class="search-form" role="search">
+      <div class="search-wrap">
+        <svg class="search-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
+        </svg>
+        <input type="search" name="q" class="search-input"
+          value="{{ request.GET.q }}"
+          placeholder="{% if LANGUAGE_CODE == 'ar' %}ابحثي عن حقيبة...{% else %}Search bags...{% endif %}"
+          autocomplete="off"/>
+      </div>
+    </form>
+
+    <div style="flex:1;min-width:0;"></div>
+
+    <!-- Actions -->
+    <div style="display:flex;align-items:center;gap:8px;flex-shrink:0;">
+
+      <!-- Language Toggle — always visible next to cart -->
+      <form action="{% url 'set_language' %}" method="post" style="display:flex;align-items:center;">
+        {% csrf_token %}
+        <input name="next" type="hidden" value="{{ request.get_full_path }}"/>
+        <div style="display:flex;border-radius:8px;overflow:hidden;border:1.5px solid var(--s3);">
+          <button type="submit" name="language" value="en"
+            style="padding:6px 11px;font-size:12px;font-weight:900;font-family:var(--font-en);cursor:pointer;border:none;transition:all .15s;background:{% if LANGUAGE_CODE == 'en' %}var(--primary){% else %}var(--s2){% endif %};color:{% if LANGUAGE_CODE == 'en' %}white{% else %}var(--t2){% endif %};">
+            EN
+          </button>
+          <button type="submit" name="language" value="ar"
+            style="padding:6px 11px;font-size:12px;font-weight:900;font-family:var(--font-ar);cursor:pointer;border:none;transition:all .15s;background:{% if LANGUAGE_CODE == 'ar' %}var(--primary){% else %}var(--s2){% endif %};color:{% if LANGUAGE_CODE == 'ar' %}white{% else %}var(--t2){% endif %};">
+            عر
+          </button>
+        </div>
+      </form>
+
+      <!-- Cart -->
+      <a href="{% url 'orders:cart' %}" class="btn btn-ghost btn-icon" aria-label="{% if LANGUAGE_CODE == 'ar' %}سلة التسوق{% else %}Cart{% endif %}" style="position:relative;">
+        <svg width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/>
+        </svg>
+        {% if cart_count > 0 %}
+        <span style="position:absolute;top:-4px;right:-4px;background:var(--secondary);color:#fff;font-size:10px;font-weight:900;min-width:18px;height:18px;border-radius:99px;display:flex;align-items:center;justify-content:center;border:2px solid var(--bg);font-family:var(--font-mono);" aria-label="{{ cart_count }} items">{{ cart_count }}</span>
+        {% endif %}
+      </a>
+
+      <!-- User Menu -->
+      {% if user.is_authenticated %}
+      <div class="user-menu">
+        <button class="user-avatar" id="userMenuBtn" aria-haspopup="true" aria-expanded="false" aria-label="Account menu">
+          {{ user.full_name|first|upper }}
+        </button>
+        <div class="user-dropdown" id="userDropdown" role="menu">
+          <div class="dropdown-head">
+            <div class="dropdown-name">{{ user.full_name }}</div>
+            <div class="dropdown-email">{{ user.email }}</div>
+          </div>
+          <a href="{% url 'users:profile' %}" class="dropdown-item" role="menuitem">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+            {% if LANGUAGE_CODE == 'ar' %}حسابي{% else %}My Profile{% endif %}
+          </a>
+          <a href="{% url 'products:wishlist' %}" class="dropdown-item" role="menuitem">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+            {% if LANGUAGE_CODE == 'ar' %}المفضلة{% else %}Wishlist{% endif %}
+          </a>
+          <div class="dropdown-divider"></div>
+          <a href="{% url 'users:logout' %}" class="dropdown-item danger" role="menuitem">
+            <svg width="15" height="15" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/></svg>
+            {% if LANGUAGE_CODE == 'ar' %}تسجيل الخروج{% else %}Logout{% endif %}
+          </a>
+        </div>
+      </div>
+      {% else %}
+      <a href="{% url 'users:login' %}" class="btn btn-ghost btn-sm" style="display:none;" id="loginBtn">
+        {% if LANGUAGE_CODE == 'ar' %}دخول{% else %}Login{% endif %}
+      </a>
+      <a href="{% url 'users:register' %}" class="btn btn-primary btn-sm" style="display:none;" id="signupBtn">
+        {% if LANGUAGE_CODE == 'ar' %}تسجيل{% else %}Sign Up{% endif %}
+      </a>
+      {% endif %}
+    </div>
+  </div>
+</header>
+
+<!-- Category Bar -->
+{% if all_categories %}
+<nav class="catbar" aria-label="{% if LANGUAGE_CODE == 'ar' %}التصنيفات{% else %}Categories{% endif %}">
+  <div class="catbar-inner">
+    <a href="{% url 'products:list' %}" class="cat-pill {% if request.resolver_match.url_name == 'list' and not request.resolver_match.kwargs.category_slug %}active{% endif %}">
+      {% if LANGUAGE_CODE == 'ar' %}الكل{% else %}All{% endif %}
+    </a>
+    {% for cat in all_categories %}
+    <a href="{% url 'products:category' cat.slug %}" class="cat-pill {% if request.resolver_match.kwargs.category_slug == cat.slug %}active{% endif %}">
+      {{ cat.get_name }}
+    </a>
+    {% endfor %}
+  </div>
+</nav>
+{% endif %}
+
+<!-- Spacer -->
+<div style="height:{% if all_categories %}108px{% else %}64px{% endif %};"></div>
+
+<!-- ═══════════════ TOASTS ═══════════════ -->
+<div id="toast-wrap" aria-live="polite">
+  {% for msg in messages %}
+  <div class="toast toast-{% if msg.tags == 'error' %}error{% elif msg.tags == 'success' %}success{% elif msg.tags == 'warning' %}warning{% else %}info{% endif %}" role="alert">
+    <span class="toast-icon">{% if msg.tags == 'success' %}✓{% elif msg.tags == 'error' %}✗{% elif msg.tags == 'warning' %}⚠{% else %}ℹ{% endif %}</span>
+    <span style="flex:1;">{{ msg }}</span>
+    <button onclick="this.parentElement.classList.add('toast-out');setTimeout(()=>this.parentElement.remove(),300)" style="background:none;border:none;cursor:pointer;color:inherit;font-size:18px;line-height:1;padding:0;margin-right:-2px;opacity:.7;" aria-label="Close">×</button>
+  </div>
+  {% endfor %}
+</div>
+
+<!-- ═══════════════ MAIN ═══════════════ -->
+<main id="main-content">
+  {% block content %}{% endblock %}
+</main>
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
+<footer class="footer" id="site-footer">
+  <div class="container" style="padding-top:48px;padding-bottom:48px;">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:36px;margin-bottom:36px;">
+
+      <!-- Brand -->
+      <div>
+        <a href="{% url 'home' %}" class="logo-link" style="margin-bottom:16px;display:inline-flex;">
+          <img src="{% static 'icons/logo_32h.png' %}" alt="Fancy فانسي" height="32" style="height:32px;width:auto;filter:drop-shadow(0 0 6px rgba(139,92,246,0.25));"
+            onerror="this.style.display='none';this.nextElementSibling.style.display='flex'"/>
+          <div style="display:none;align-items:center;gap:8px;">
+            <div style="width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#8B5CF6,#6D28D9);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+              <svg viewBox="0 0 64 64" fill="none" width="34" height="34"><rect x="15" y="13" width="9" height="30" rx="2.5" fill="white"/><rect x="15" y="13" width="26" height="9" rx="2.5" fill="white"/><rect x="15" y="26" width="19" height="8" rx="2.5" fill="white"/><circle cx="46" cy="41" r="5" fill="#F43F5E"/></svg>
+            </div>
+            <div>
+              <div style="font-size:17px;font-weight:900;color:var(--t1);font-family:var(--font-en);">Fancy</div>
+              <div style="font-size:12px;font-weight:700;color:var(--t3);font-family:var(--font-ar);">فانسي</div>
+            </div>
+          </div>
+        </a>
+        <p style="font-size:14px;color:var(--t2);line-height:1.7;margin-bottom:18px;">{% if LANGUAGE_CODE == 'ar' %}حقائب وإكسسوارات نسائية فاخرة بأسعار مناسبة.{% else %}Premium bags & accessories for the modern woman.{% endif %}</p>
+        <div style="display:flex;gap:8px;">
+          <a href="https://facebook.com" class="btn btn-ghost btn-icon btn-sm" aria-label="Facebook">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg>
+          </a>
+          <a href="https://wa.me/201212184205" class="btn btn-ghost btn-icon btn-sm" style="color:var(--success);" aria-label="WhatsApp">
+            <svg width="15" height="15" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+          </a>
+        </div>
+      </div>
+
+      <!-- Shop -->
+      <div>
+        <h4 style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:16px;">{% if LANGUAGE_CODE == 'ar' %}تسوقي{% else %}Shop{% endif %}</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          {% for cat in all_categories|slice:":6" %}
+          <li>
+            <a href="{% url 'products:category' cat.slug %}" style="font-size:14px;color:var(--t2);text-decoration:none;transition:color .15s;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">
+              {{ cat.get_name }}
+            </a>
+          </li>
+          {% endfor %}
+        </ul>
+      </div>
+
+      <!-- Account -->
+      <div>
+        <h4 style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:16px;">{% if LANGUAGE_CODE == 'ar' %}حسابي{% else %}Account{% endif %}</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:10px;">
+          {% if user.is_authenticated %}
+          <li><a href="{% url 'users:profile' %}" style="font-size:14px;color:var(--t2);text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">{% if LANGUAGE_CODE == 'ar' %}ملفي الشخصي{% else %}My Profile{% endif %}</a></li>
+          <li><a href="{% url 'products:wishlist' %}" style="font-size:14px;color:var(--t2);text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">{% if LANGUAGE_CODE == 'ar' %}المفضلة{% else %}Wishlist{% endif %}</a></li>
+          {% else %}
+          <li><a href="{% url 'users:login' %}" style="font-size:14px;color:var(--t2);text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">{% if LANGUAGE_CODE == 'ar' %}تسجيل الدخول{% else %}Login{% endif %}</a></li>
+          <li><a href="{% url 'users:register' %}" style="font-size:14px;color:var(--t2);text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">{% if LANGUAGE_CODE == 'ar' %}إنشاء حساب{% else %}Register{% endif %}</a></li>
+          {% endif %}
+        </ul>
+      </div>
+
+      <!-- Contact -->
+      <div>
+        <h4 style="font-size:14px;font-weight:900;color:var(--t1);margin-bottom:16px;">{% if LANGUAGE_CODE == 'ar' %}تواصلي معنا{% else %}Contact{% endif %}</h4>
+        <ul style="list-style:none;display:flex;flex-direction:column;gap:12px;">
+          <li style="display:flex;align-items:center;gap:8px;">
+            <span style="color:var(--success);font-size:16px;">📱</span>
+            <a href="https://wa.me/201212184205" style="font-size:14px;color:var(--t2);text-decoration:none;" onmouseover="this.style.color='var(--primary)'" onmouseout="this.style.color='var(--t2)'">01212184205</a>
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:var(--font-mono);color:var(--warning);font-size:11px;font-weight:900;background:rgba(217,119,6,.1);border-radius:4px;padding:2px 5px;">IP</span>
+            <span style="font-size:14px;color:var(--t2);">Instapay: 01205951559</span>
+          </li>
+          <li style="display:flex;align-items:center;gap:8px;">
+            <span style="font-family:var(--font-mono);color:var(--warning);font-size:11px;font-weight:900;background:rgba(217,119,6,.1);border-radius:4px;padding:2px 5px;">OC</span>
+            <span style="font-size:14px;color:var(--t2);">Orange Cash: 01223184205</span>
+          </li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Footer bottom -->
+    <div style="border-top:1px solid var(--s3);padding-top:24px;display:flex;flex-wrap:wrap;align-items:center;justify-content:space-between;gap:12px;">
+      <p style="font-size:12px;color:var(--t3);">© 2024 Fancy فانسي. {% if LANGUAGE_CODE == 'ar' %}جميع الحقوق محفوظة.{% else %}All rights reserved.{% endif %}</p>
+      <p style="font-size:12px;color:var(--t3);">{% if LANGUAGE_CODE == 'ar' %}صُنع بـ{% else %}Made with{% endif %} <span style="color:var(--secondary);">♥</span> {% if LANGUAGE_CODE == 'ar' %}في مصر{% else %}in Egypt{% endif %}</p>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════════════ MOBILE NAV ═══════════════ -->
+<nav class="mobile-nav" aria-label="Mobile navigation">
+  <a href="{% url 'home' %}" class="mob-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+    <span>{% if LANGUAGE_CODE == 'ar' %}الرئيسية{% else %}Home{% endif %}</span>
+  </a>
+  <a href="{% url 'products:list' %}" class="mob-item">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+    <span>{% if LANGUAGE_CODE == 'ar' %}تسوق{% else %}Shop{% endif %}</span>
+  </a>
+  <a href="{% url 'products:search' %}" class="mob-item">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg>
+    <span>{% if LANGUAGE_CODE == 'ar' %}بحث{% else %}Search{% endif %}</span>
+  </a>
+  <a href="{% url 'orders:cart' %}" class="mob-item" style="position:relative;">
+    <div style="position:relative;display:inline-block;">
+      <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z"/></svg>
+      {% if cart_count > 0 %}<span style="position:absolute;top:-4px;right:-7px;background:var(--secondary);color:#fff;font-size:9px;font-weight:900;width:14px;height:14px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:1.5px solid var(--bg);">{{ cart_count }}</span>{% endif %}
+    </div>
+    <span>{% if LANGUAGE_CODE == 'ar' %}سلتي{% else %}Cart{% endif %}</span>
+  </a>
+  <a href="{% if user.is_authenticated %}{% url 'users:profile' %}{% else %}{% url 'users:login' %}{% endif %}" class="mob-item">
+    <svg fill="none" stroke="currentColor" viewBox="0 0 24 24" aria-hidden="true"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"/></svg>
+    <span>{% if LANGUAGE_CODE == 'ar' %}أنا{% else %}Me{% endif %}</span>
+  </a>
+</nav>
+
+
+<!-- WhatsApp float -->
+<a href="https://wa.me/201212184205" target="_blank" rel="noopener"
+  style="position:fixed;bottom:80px;right:20px;z-index:90;width:52px;height:52px;border-radius:50%;background:linear-gradient(135deg,#25D366,#128C7E);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 24px rgba(37,211,102,0.4);transition:transform .18s ease;"
+  onmouseover="this.style.transform='scale(1.12)'" onmouseout="this.style.transform=''"
+  aria-label="WhatsApp">
+  <svg width="26" height="26" fill="white" viewBox="0 0 24 24" aria-hidden="true"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+</a>
+
+<!-- ═══════════════ SCRIPTS ═══════════════ -->
+<script>
+(function() {
+  'use strict';
+
+  // ── Ensure dark mode ──
+  document.documentElement.classList.add('dark');
+  document.body.classList.add('dark');
+
+  // ── Responsive visibility ──
+  var w = window.innerWidth;
+  var isMobile = w < 768;
+
+  // Auth buttons on desktop
+  if (w >= 640) {
+    var lb = document.getElementById('loginBtn');
+    var sb = document.getElementById('signupBtn');
+    if (lb) lb.style.display = 'inline-flex';
+    if (sb) sb.style.display = 'inline-flex';
+  }
+
+  // ── User dropdown ──
+  var btn = document.getElementById('userMenuBtn');
+  var dd  = document.getElementById('userDropdown');
+  if (btn && dd) {
+    btn.addEventListener('click', function(e) {
+      e.stopPropagation();
+      var open = dd.classList.contains('open');
+      dd.classList.toggle('open');
+      btn.setAttribute('aria-expanded', !open);
+    });
+    document.addEventListener('click', function() {
+      if (dd) { dd.classList.remove('open'); btn.setAttribute('aria-expanded', 'false'); }
+    });
+    dd.addEventListener('click', function(e) { e.stopPropagation(); });
+    // Keyboard
+    btn.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape') { dd.classList.remove('open'); btn.setAttribute('aria-expanded','false'); btn.focus(); }
+    });
+  }
+
+  // ── Auto-dismiss toasts ──
+  document.querySelectorAll('.toast').forEach(function(el, i) {
+    setTimeout(function() {
+      el.classList.add('toast-out');
+      setTimeout(function() { el.remove(); }, 300);
+    }, 4000 + i * 600);
+  });
+
+  // ── Lazy image loading ──
+  var lazyImgs = document.querySelectorAll('img[data-src]');
+  if (lazyImgs.length && 'IntersectionObserver' in window) {
+    var observer = new IntersectionObserver(function(entries) {
+      entries.forEach(function(e) {
+        if (e.isIntersecting) {
+          var img = e.target;
+          img.src = img.dataset.src;
+          img.onload = function() { img.classList.add('loaded'); };
+          img.onerror = function() { img.classList.add('loaded'); };
+          observer.unobserve(img);
+        }
+      });
+    }, { rootMargin: '60px' });
+    lazyImgs.forEach(function(img) { observer.observe(img); });
+  } else {
+    lazyImgs.forEach(function(img) { img.src = img.dataset.src; img.classList.add('loaded'); });
+  }
+
+  // ── PWA Service Worker ──
+  if ('serviceWorker' in navigator) {
+    window.addEventListener('load', function() {
+      navigator.serviceWorker.register('/static/sw.js').catch(function() {});
+    });
+  }
+})();
+</script>
+
+{% block extra_js %}{% endblock %}
+
+</body>
+</html>

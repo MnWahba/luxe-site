@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}Order Confirmed!{% else %}تم تأكيد الطلب!{% endif %}{% endblock %}
+{% block content %}
+<div class="max-w-2xl mx-auto px-4 py-16 text-center">
+  <div class="text-8xl mb-6 animate-bounce">🎉</div>
+  <h1 class="text-4xl font-black text-success mb-3">{% if LANGUAGE_CODE == 'ar' %}Order Confirmed!{% else %}تم تأكيد الطلب!{% endif %}</h1>
+  <p class="text-text-muted text-lg mb-2">{% if LANGUAGE_CODE == 'ar' %}Thank you for your order{% else %}شكراً لطلبك{% endif %}, {{ order.full_name }}!</p>
+  <div class="badge-primary text-lg px-6 py-2 inline-block my-4 font-mono">{{ order.order_number }}</div>
+
+  <div class="card p-6 text-start mt-8 mb-6">
+    <h2 class="font-black text-text-primary text-xl mb-4">{% if LANGUAGE_CODE == 'ar' %}Order Details{% else %}تفاصيل الطلب{% endif %}</h2>
+    <div class="space-y-3">
+      {% for item in order.items.all %}
+      <div class="flex justify-between text-sm">
+        <span class="text-text-muted">{{ item.quantity }}× {{ item.product_name }}</span>
+        <span class="text-text-primary font-bold">{{ item.total }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+      </div>
+      {% endfor %}
+      <div class="border-t border-surface-2 pt-3 flex justify-between font-black text-lg">
+        <span>{% if LANGUAGE_CODE == 'ar' %}Total{% else %}الإجمالي{% endif %}</span><span class="text-primary">{{ order.total }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+      </div>
+    </div>
+    <div class="mt-4 pt-4 border-t border-surface-2 grid grid-cols-2 gap-3 text-sm">
+      <div><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Payment{% else %}الدفع{% endif %}:</span> <span class="text-text-primary">{{ order.get_payment_method_display }}</span></div>
+      <div><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Status{% else %}الحالة{% endif %}:</span> <span class="badge-warning">{{ order.get_status_display }}</span></div>
+      <div class="col-span-2"><span class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}Shipping to{% else %}الشحن إلى{% endif %}:</span> <span class="text-text-primary">{{ order.address_line1 }}, {{ order.city }}, {{ order.governorate }}</span></div>
+    </div>
+  </div>
+
+  <p class="text-text-muted text-sm mb-8">{% if LANGUAGE_CODE == 'ar' %}A confirmation email has been sent to{% else %}تم إرسال بريد تأكيد إلى{% endif %} {{ order.email }}</p>
+
+  <div class="flex flex-col sm:flex-row gap-4 justify-center">
+    <a href="{% url 'home' %}" class="btn-primary">{% if LANGUAGE_CODE == 'ar' %}Continue Shopping{% else %}مواصلة التسوق{% endif %}</a>
+    {% if user.is_authenticated %}
+    <a href="{% url 'users:profile' %}" class="btn-outline">{% trans "My Orders" %}</a>
+    {% endif %}
+  </div>
+</div>
+{% endblock %}

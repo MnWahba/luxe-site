@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}Login{% else %}دخول{% endif %}{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <a href="{% url 'home' %}" class="text-3xl font-black text-text-primary inline-flex items-center gap-2"><span class="text-primary text-3xl">✦</span> Fancy فانسي</a>
+      <h1 class="text-2xl font-black text-text-primary mt-4">{% if LANGUAGE_CODE == 'ar' %}Welcome Back{% else %}أهلاً بعودتك{% endif %}</h1>
+      <p class="text-text-muted mt-2">{% if LANGUAGE_CODE == 'ar' %}Login to your account{% else %}ادخلي لحسابك{% endif %}</p>
+    </div>
+    <div class="card p-8">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        <div class="mb-5">
+          <label class="block text-text-muted text-sm font-semibold mb-2">{% if LANGUAGE_CODE == 'ar' %}Email{% else %}البريد الإلكتروني{% endif %}</label>
+          {{ form.username }}
+          {% if form.username.errors %}<p class="text-danger text-xs mt-1.5">{{ form.username.errors|join:", " }}</p>{% endif %}
+        </div>
+        <div class="mb-5">
+          <label class="block text-text-muted text-sm font-semibold mb-2 flex justify-between">
+            <span>{% if LANGUAGE_CODE == 'ar' %}Password{% else %}كلمة السر{% endif %}</span>
+            <a href="{% url 'users:password_reset_request' %}" class="text-primary text-xs hover:underline">{% if LANGUAGE_CODE == 'ar' %}Forgot?{% else %}نسيتِ؟{% endif %}</a>
+          </label>
+          {{ form.password }}
+          {% if form.password.errors %}<p class="text-danger text-xs mt-1.5">{{ form.password.errors|join:", " }}</p>{% endif %}
+        </div>
+        {% if form.non_field_errors %}<div class="bg-danger/10 border border-danger/30 rounded-xl p-3 mb-4 text-danger text-sm">{{ form.non_field_errors }}</div>{% endif %}
+        <button type="submit" class="btn-primary w-full text-base">{% if LANGUAGE_CODE == 'ar' %}Login{% else %}دخول{% endif %}</button>
+      </form>
+      <p class="text-center text-text-muted text-sm mt-6">{% if LANGUAGE_CODE == 'ar' %}Don't have an account?{% else %}ليس لديكِ حساب؟{% endif %} <a href="{% url 'users:register' %}" class="text-primary font-bold hover:underline">{% if LANGUAGE_CODE == 'ar' %}Sign Up{% else %}تسجيل{% endif %}</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

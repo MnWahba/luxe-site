@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}Shopping Cart{% else %}سلة التسوق{% endif %}{% endblock %}
+{% block content %}
+<div class="max-w-6xl mx-auto px-4 py-8">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px;margin-bottom:32px;">
+    <h1 style="font-size:clamp(22px,5vw,30px);font-weight:900;color:var(--t1);margin:0;">
+      🛍️ {% if LANGUAGE_CODE == 'ar' %}سلة التسوق{% else %}Shopping Cart{% endif %}
+      <span style="font-size:16px;font-weight:400;color:var(--t2);">({{ cart|length }} {% if LANGUAGE_CODE == 'ar' %}عنصر{% else %}items{% endif %})</span>
+    </h1>
+    {% if cart|length > 0 %}
+    <form action="{% url 'orders:cart_clear' %}" method="post">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-ghost btn-sm" style="color:var(--danger);border-color:rgba(220,38,38,0.3);"
+        onclick="return confirm('{% if LANGUAGE_CODE == 'ar' %}هل تريد مسح السلة؟{% else %}Clear entire cart?{% endif %}')">
+        <svg width="14" height="14" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
+        {% if LANGUAGE_CODE == 'ar' %}مسح الكل{% else %}Clear Cart{% endif %}
+      </button>
+    </form>
+    {% endif %}
+  </div>
+
+  {% if cart|length > 0 %}
+  <div class="grid lg:grid-cols-3 gap-8">
+    <!-- Cart Items -->
+    <div class="lg:col-span-2 space-y-4">
+      {% for item in cart %}
+      <div class="card p-4 flex gap-4 items-center" id="cart-item-{{ item.product.id }}">
+        <a href="{% url 'products:detail' item.product.slug %}">
+          {% with item.product.get_primary_image as img %}
+          {% if img %}<img src="{{ img.image.url }}" alt="{{ item.product.get_name }}" class="w-20 h-20 object-cover rounded-xl flex-shrink-0"/>
+          {% else %}<div class="w-20 h-20 rounded-xl bg-surface-2 flex items-center justify-center text-3xl flex-shrink-0">👜</div>{% endif %}
+          {% endwith %}
+        </a>
+        <div class="flex-1 min-w-0">
+          <a href="{% url 'products:detail' item.product.slug %}" class="font-bold text-text-primary hover:text-primary line-clamp-1">{{ item.product.get_name }}</a>
+          {% if item.color_name %}
+          <div style="display:flex;align-items:center;gap:6px;margin-top:3px;">
+            <div style="width:12px;height:12px;border-radius:50%;background:{{ item.color_hex }};border:1px solid rgba(255,255,255,0.2);flex-shrink:0;"></div>
+            <span style="font-size:12px;color:var(--t3);">{% if LANGUAGE_CODE == 'ar' %}{{ item.color_name_ar }}{% else %}{{ item.color_name }}{% endif %}</span>
+          </div>
+          {% endif %}
+          <p class="text-text-muted text-sm">{{ item.price }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %} {% if LANGUAGE_CODE == 'ar' %}each{% else %}للقطعة{% endif %}</p>
+        </div>
+        <div class="flex items-center gap-3 flex-shrink-0">
+          <div class="flex items-center bg-surface-2 rounded-xl">
+            <form action="{% url 'orders:cart_update' item.product.id %}" method="post" class="inline">
+              {% csrf_token %}<input type="hidden" name="quantity" value="{{ item.quantity|add:'-1' }}"/><input type="hidden" name="cart_key" value="{{ item.key }}"/>
+              <button type="submit" class="w-8 h-8 flex items-center justify-center text-text-muted hover:text-primary font-bold rounded-l-xl">−</button>
+            </form>
+            <span class="w-8 text-center text-text-primary font-bold text-sm">{{ item.quantity }}</span>
+            <form action="{% url 'orders:cart_update' item.product.id %}" method="post" class="inline">
+              {% csrf_token %}<input type="hidden" name="quantity" value="{{ item.quantity|add:'1' }}"/><input type="hidden" name="cart_key" value="{{ item.key }}"/>
+              <button type="submit" class="w-8 h-8 flex items-center justify-center text-text-muted hover:text-primary font-bold rounded-r-xl">+</button>
+            </form>
+          </div>
+          <span class="font-black text-text-primary w-24 text-end">{{ item.total_price }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+          <form action="{% url 'orders:cart_remove' item.product.id %}" method="post">
+            {% csrf_token %}<input type="hidden" name="cart_key" value="{{ item.key }}"/><button type="submit" class="w-8 h-8 flex items-center justify-center text-text-muted hover:text-danger rounded-xl hover:bg-danger/10 transition-colors">✕</button>
+          </form>
+        </div>
+      </div>
+      {% endfor %}
+    </div>
+
+    <!-- Order Summary -->
+    <div class="lg:col-span-1">
+      <div class="card p-6 sticky top-24">
+        <h2 class="font-black text-text-primary text-xl mb-6">{% if LANGUAGE_CODE == 'ar' %}Order Summary{% else %}ملخص الطلب{% endif %}</h2>
+
+        <!-- Coupon -->
+        <div class="mb-6">
+          <label class="block text-text-muted text-sm font-semibold mb-2">{% if LANGUAGE_CODE == 'ar' %}Coupon Code{% else %}كود الكوبون{% endif %}</label>
+          <div class="flex gap-2">
+            <input type="text" id="couponCode" placeholder="{% if LANGUAGE_CODE == 'ar' %}Enter code{% else %}أدخل الكود{% endif %}" class="form-input flex-1 py-2.5 text-sm"/>
+            <button onclick="applyCoupon()" class="btn-primary px-4 py-2.5 min-h-0 text-sm">{% if LANGUAGE_CODE == 'ar' %}Apply{% else %}تطبيق{% endif %}</button>
+          </div>
+          <p id="couponMsg" class="text-sm mt-2 hidden"></p>
+        </div>
+
+        <!-- Totals -->
+        <div class="space-y-3 mb-6">
+          <div class="flex justify-between text-text-muted"><span>{% if LANGUAGE_CODE == 'ar' %}Subtotal{% else %}الإجمالي الفرعي{% endif %}</span><span id="subtotalAmt">{{ subtotal }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span></div>
+          {% if coupon_discount > 0 %}
+          <div class="flex justify-between text-success"><span>{% if LANGUAGE_CODE == 'ar' %}Discount{% else %}خصم{% endif %}</span><span>-{{ coupon_discount }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span></div>
+          {% endif %}
+          <div class="border-t border-surface-2 pt-3 flex justify-between text-text-primary font-black text-lg">
+            <span>{% if LANGUAGE_CODE == 'ar' %}Total{% else %}الإجمالي{% endif %}</span><span id="totalAmt">{{ final_total }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+          </div>
+        </div>
+
+        <a href="{% url 'orders:checkout' %}" class="btn-primary w-full text-base justify-center">{% if LANGUAGE_CODE == 'ar' %}Proceed to Checkout{% else %}إتمام الطلب{% endif %} →</a>
+        <a href="{% url 'products:list' %}" class="btn-outline w-full text-sm justify-center mt-3">{% if LANGUAGE_CODE == 'ar' %}Continue Shopping{% else %}مواصلة التسوق{% endif %}</a>
+      </div>
+    </div>
+  </div>
+
+  {% else %}
+  <div class="text-center py-24">
+    <div class="text-8xl mb-6">🛒</div>
+    <h2 class="text-2xl font-bold text-text-primary mb-2">{% if LANGUAGE_CODE == 'ar' %}Your cart is empty{% else %}سلتك فارغة{% endif %}</h2>
+    <p class="text-text-muted mb-8">{% if LANGUAGE_CODE == 'ar' %}Add some beautiful bags to get started{% else %}أضيفي حقائب للبدء{% endif %}</p>
+    <a href="{% url 'products:list' %}" class="btn-primary">{% if LANGUAGE_CODE == 'ar' %}Start Shopping{% else %}ابدأي التسوق{% endif %}</a>
+  </div>
+  {% endif %}
+</div>
+
+<script>
+async function applyCoupon() {
+  const code = document.getElementById('couponCode').value.trim();
+  if (!code) return;
+  const msg = document.getElementById('couponMsg');
+  msg.className = 'text-sm mt-2';
+  msg.classList.remove('hidden');
+  try {
+    const r = await fetch('{% url "coupons:apply" %}', {
+      method: 'POST',
+      headers: {'Content-Type': 'application/json', 'X-CSRFToken': '{{ csrf_token }}'},
+      body: JSON.stringify({code})
+    });
+    const data = await r.json();
+    if (data.success) {
+      msg.classList.add('text-success');
+      msg.textContent = data.message;
+      document.getElementById('totalAmt').textContent = data.new_total.toFixed(0) + ' EGP';
+    } else {
+      msg.classList.add('text-danger');
+      msg.textContent = data.error;
+    }
+  } catch(e) { msg.classList.add('text-danger'); msg.textContent = 'Error applying coupon.'; }
+}
+</script>
+{% endblock %}

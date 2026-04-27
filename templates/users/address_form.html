@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{{ title }}{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-12">
+  <h1 class="text-2xl font-black text-text-primary mb-8">{{ title }}</h1>
+  <div class="card p-6">
+    <form method="post">{% csrf_token %}
+      {% for field in form %}
+      <div class="mb-5"><label class="block text-text-muted text-sm font-semibold mb-2">{{ field.label }}</label>{{ field }}{% if field.errors %}<p class="text-danger text-xs mt-1.5">{{ field.errors|join:", " }}</p>{% endif %}</div>
+      {% endfor %}
+      <div class="flex gap-3">
+        <button type="submit" class="btn-primary">{% if LANGUAGE_CODE == 'ar' %}Save Address{% else %}حفظ العنوان{% endif %}</button>
+        <a href="{% url 'users:profile' %}" class="btn-outline">{% if LANGUAGE_CODE == 'ar' %}Cancel{% else %}إلغاء{% endif %}</a>
+      </div>
+    </form>
+  </div>
+</div>
+{% endblock %}

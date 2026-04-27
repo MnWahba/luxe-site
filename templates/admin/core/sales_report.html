@@ -1,0 +1,288 @@
+{% extends "admin/base_site.html" %}
+{% block title %}Sales Reports — Fancy Admin{% endblock %}
+{% block content %}
+<style>
+  .report-wrap { font-family:'Outfit','Cairo',sans-serif; }
+  .stats-row { display:grid; grid-template-columns:repeat(auto-fit,minmax(180px,1fr)); gap:16px; margin-bottom:28px; }
+  .stat-box { background:#18181B; border:1px solid #27272A; border-radius:12px; padding:20px; }
+  .stat-box .label { font-size:12px; color:#71717A; font-weight:700; text-transform:uppercase; letter-spacing:.06em; margin-bottom:6px; }
+  .stat-box .value { font-size:28px; font-weight:900; color:#FAFAFA; }
+  .stat-box .sub   { font-size:12px; color:#A1A1AA; margin-top:4px; }
+  .stat-box.green .value { color:#16A34A; }
+  .stat-box.purple .value { color:#8B5CF6; }
+  .stat-box.pink .value  { color:#F43F5E; }
+  .stat-box.yellow .value{ color:#D97706; }
+  .card { background:#18181B; border:1px solid #27272A; border-radius:12px; padding:20px; margin-bottom:20px; }
+  .card h3 { font-size:15px; font-weight:900; color:#FAFAFA; margin-bottom:16px; }
+  table.report-table { width:100%; border-collapse:collapse; font-size:13px; }
+  table.report-table th { background:#0F0F12; color:#71717A; font-weight:700; font-size:11px; text-transform:uppercase; letter-spacing:.06em; padding:10px 12px; text-align:left; border-bottom:1px solid #27272A; }
+  table.report-table td { padding:10px 12px; border-bottom:1px solid #27272A; color:#A1A1AA; }
+  table.report-table tr:hover td { background:rgba(139,92,246,.04); }
+  table.report-table td.bold { color:#FAFAFA; font-weight:700; }
+  .period-btns { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+  .period-btn { padding:7px 16px; border-radius:8px; border:1px solid #27272A; background:transparent; color:#A1A1AA; cursor:pointer; font-size:13px; font-weight:700; transition:all .15s; }
+  .period-btn.active, .period-btn:hover { border-color:#8B5CF6; color:#8B5CF6; background:rgba(139,92,246,.08); }
+  .bar-wrap { display:flex; align-items:flex-end; gap:3px; height:100px; margin-top:8px; }
+  .bar { flex:1; background:linear-gradient(to top, #8B5CF6, rgba(139,92,246,.3)); border-radius:3px 3px 0 0; min-height:3px; transition:height .3s; }
+  .order-status-dot { width:8px; height:8px; border-radius:50%; display:inline-block; margin-right:6px; }
+  .status-pending  { background:#D97706; }
+  .status-confirmed{ background:#8B5CF6; }
+  .status-shipped  { background:#F43F5E; }
+  .status-delivered{ background:#16A34A; }
+  .status-cancelled{ background:#DC2626; }
+</style>
+
+<div class="report-wrap">
+  <h1 style="color:#FAFAFA;font-size:22px;font-weight:900;margin-bottom:8px;">📊 Sales Reports</h1>
+  <p style="color:#71717A;font-size:14px;margin-bottom:20px;">تقارير المبيعات — Live data from your store</p>
+
+  <!-- Period selector -->
+  <div class="period-btns">
+    <button class="period-btn active" onclick="loadData(7,this)">7 Days</button>
+    <button class="period-btn" onclick="loadData(30,this)">30 Days</button>
+    <button class="period-btn" onclick="loadData(90,this)">90 Days</button>
+    <button class="period-btn" onclick="loadData(365,this)">1 Year</button>
+  </div>
+
+  <!-- KPI Cards -->
+  <div class="stats-row" id="kpiCards">
+    <div class="stat-box purple">
+      <div class="label">Total Revenue</div>
+      <div class="value" id="kpi-revenue">—</div>
+      <div class="sub">EGP</div>
+    </div>
+    <div class="stat-box green">
+      <div class="label">Orders</div>
+      <div class="value" id="kpi-orders">—</div>
+      <div class="sub" id="kpi-delivered">— delivered</div>
+    </div>
+    <div class="stat-box pink">
+      <div class="label">Avg Order Value</div>
+      <div class="value" id="kpi-avg">—</div>
+      <div class="sub">EGP per order</div>
+    </div>
+    <div class="stat-box yellow">
+      <div class="label">Units Sold</div>
+      <div class="value" id="kpi-units">—</div>
+      <div class="sub">products</div>
+    </div>
+    <div class="stat-box">
+      <div class="label">Customers</div>
+      <div class="value" id="kpi-customers" style="color:#FAFAFA;">—</div>
+      <div class="sub" id="kpi-new-customers">— new</div>
+    </div>
+    <div class="stat-box">
+      <div class="label">Pending Orders</div>
+      <div class="value" id="kpi-pending" style="color:#D97706;">—</div>
+      <div class="sub">need action</div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+    <!-- Revenue Chart -->
+    <div class="card">
+      <h3>📈 Daily Revenue</h3>
+      <div class="bar-wrap" id="revenueChart">
+        <div style="color:#71717A;font-size:13px;">Loading...</div>
+      </div>
+      <div id="chartLabels" style="display:flex;gap:3px;margin-top:4px;font-size:9px;color:#52525B;"></div>
+    </div>
+
+    <!-- Order Status Breakdown -->
+    <div class="card">
+      <h3>📋 Order Status Breakdown</h3>
+      <div id="statusBreakdown" style="display:flex;flex-direction:column;gap:10px;">
+        <div style="color:#71717A;font-size:13px;">Loading...</div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-bottom:20px;">
+    <!-- Top Products -->
+    <div class="card">
+      <h3>🏆 Top Products by Sales</h3>
+      <table class="report-table">
+        <thead><tr><th>#</th><th>Product</th><th>Units</th><th>Revenue</th></tr></thead>
+        <tbody id="topProductsTable"><tr><td colspan="4" style="color:#71717A;">Loading...</td></tr></tbody>
+      </table>
+    </div>
+
+    <!-- Category Sales -->
+    <div class="card">
+      <h3>🗂️ Sales by Category</h3>
+      <table class="report-table">
+        <thead><tr><th>Category</th><th>Units</th><th>Revenue</th></tr></thead>
+        <tbody id="categoryTable"><tr><td colspan="3" style="color:#71717A;">Loading...</td></tr></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Orders -->
+  <div class="card">
+    <h3>🕐 Recent Orders</h3>
+    <table class="report-table">
+      <thead><tr><th>Order #</th><th>Customer</th><th>Total</th><th>Status</th><th>Date</th><th>Action</th></tr></thead>
+      <tbody id="recentOrdersTable"><tr><td colspan="6" style="color:#71717A;">Loading...</td></tr></tbody>
+    </table>
+  </div>
+
+  <!-- Low Stock Alert -->
+  <div class="card">
+    <h3>⚠️ Low Stock Alert</h3>
+    <table class="report-table">
+      <thead><tr><th>Product</th><th>SKU</th><th>Stock</th><th>Action</th></tr></thead>
+      <tbody id="lowStockTable"><tr><td colspan="4" style="color:#71717A;">Loading...</td></tr></tbody>
+    </table>
+  </div>
+</div>
+
+<script>
+let currentPeriod = 7;
+
+async function loadData(days, btn) {
+  currentPeriod = days;
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+
+  // Load chart data
+  try {
+    const r = await fetch(`/admin/core/sales-data/?period=${days}`);
+    const data = await r.json();
+    renderCharts(data, days);
+  } catch(e) { console.error(e); }
+
+  // Load KPIs from orders
+  loadKPIs(days);
+  loadRecentOrders();
+  loadLowStock();
+  loadStatusBreakdown(days);
+}
+
+async function loadKPIs(days) {
+  try {
+    const r = await fetch(`/admin/core/kpis/?period=${days}`);
+    const d = await r.json();
+    document.getElementById('kpi-revenue').textContent = formatNum(d.revenue);
+    document.getElementById('kpi-orders').textContent = d.total_orders;
+    document.getElementById('kpi-delivered').textContent = `${d.delivered} delivered`;
+    document.getElementById('kpi-avg').textContent = d.avg_order ? Math.round(d.avg_order) : '—';
+    document.getElementById('kpi-units').textContent = d.units_sold || '—';
+    document.getElementById('kpi-customers').textContent = d.total_customers;
+    document.getElementById('kpi-new-customers').textContent = `${d.new_customers} new`;
+    document.getElementById('kpi-pending').textContent = d.pending;
+  } catch(e) {}
+}
+
+async function loadStatusBreakdown(days) {
+  try {
+    const r = await fetch(`/admin/core/kpis/?period=${days}`);
+    const d = await r.json();
+    const statuses = [
+      {key:'pending',   label:'Pending',   count:d.pending,   cls:'status-pending'},
+      {key:'confirmed', label:'Confirmed', count:d.confirmed, cls:'status-confirmed'},
+      {key:'shipped',   label:'Shipped',   count:d.shipped,   cls:'status-shipped'},
+      {key:'delivered', label:'Delivered', count:d.delivered, cls:'status-delivered'},
+      {key:'cancelled', label:'Cancelled', count:d.cancelled, cls:'status-cancelled'},
+    ];
+    const total = statuses.reduce((s,x) => s+(x.count||0), 0) || 1;
+    const el = document.getElementById('statusBreakdown');
+    el.innerHTML = statuses.map(s => `
+      <div style="display:flex;align-items:center;gap:10px;">
+        <span class="order-status-dot ${s.cls}"></span>
+        <span style="flex:1;font-size:13px;color:#A1A1AA;">${s.label}</span>
+        <span style="font-size:13px;font-weight:700;color:#FAFAFA;">${s.count||0}</span>
+        <div style="width:80px;background:#27272A;border-radius:99px;height:6px;overflow:hidden;">
+          <div style="height:100%;background:#8B5CF6;width:${Math.round(((s.count||0)/total)*100)}%"></div>
+        </div>
+      </div>
+    `).join('');
+  } catch(e) {}
+}
+
+function renderCharts(data, days) {
+  // Revenue bar chart
+  const bars = document.getElementById('revenueChart');
+  const labels = document.getElementById('chartLabels');
+  if (!data.daily || !data.daily.length) {
+    bars.innerHTML = '<span style="color:#71717A;font-size:13px;">No data for this period</span>';
+    return;
+  }
+  const maxRev = Math.max(...data.daily.map(d => parseFloat(d.revenue||0)), 1);
+  bars.innerHTML = data.daily.slice(-30).map(d => {
+    const h = Math.max(4, Math.round((parseFloat(d.revenue||0)/maxRev)*94));
+    const date = new Date(d.day);
+    return `<div class="bar" style="height:${h}px" title="${date.toLocaleDateString()}: ${formatNum(d.revenue)} EGP"></div>`;
+  }).join('');
+  labels.innerHTML = data.daily.slice(-30).map((d,i) => {
+    const date = new Date(d.day);
+    return `<div style="flex:1;text-align:center;overflow:hidden;">${i%5===0?date.toLocaleDateString('en',{month:'short',day:'numeric'}):''}</div>`;
+  }).join('');
+
+  // Top products
+  const tp = document.getElementById('topProductsTable');
+  if (!data.top_products?.length) { tp.innerHTML='<tr><td colspan="4" style="color:#71717A;">No sales data</td></tr>'; }
+  else tp.innerHTML = data.top_products.map((p,i) => `
+    <tr>
+      <td>${i+1}</td>
+      <td class="bold">${p.product_name}</td>
+      <td>${p.units}</td>
+      <td class="bold">${formatNum(p.revenue)} EGP</td>
+    </tr>`).join('');
+
+  // Categories
+  const ct = document.getElementById('categoryTable');
+  if (!data.categories?.length) { ct.innerHTML='<tr><td colspan="3" style="color:#71717A;">No data</td></tr>'; }
+  else ct.innerHTML = data.categories.map(c => `
+    <tr>
+      <td class="bold">${c.cat_name||'Uncategorized'}</td>
+      <td>${c.units||0}</td>
+      <td class="bold">${formatNum(c.revenue)} EGP</td>
+    </tr>`).join('');
+}
+
+async function loadRecentOrders() {
+  try {
+    const r = await fetch('/admin/core/recent-orders/');
+    const d = await r.json();
+    const el = document.getElementById('recentOrdersTable');
+    if (!d.orders?.length) { el.innerHTML='<tr><td colspan="6" style="color:#71717A;">No orders yet</td></tr>'; return; }
+    const statusColors = {pending:'#D97706',confirmed:'#8B5CF6',shipped:'#F43F5E',delivered:'#16A34A',cancelled:'#DC2626'};
+    el.innerHTML = d.orders.map(o => `
+      <tr>
+        <td class="bold" style="font-family:monospace;">${o.order_number}</td>
+        <td>${o.full_name}</td>
+        <td class="bold">${formatNum(o.total)} EGP</td>
+        <td><span class="order-status-dot status-${o.status}"></span><span style="color:${statusColors[o.status]||'#fff'};font-weight:700;">${o.status}</span></td>
+        <td style="color:#71717A;">${new Date(o.created_at).toLocaleDateString()}</td>
+        <td><a href="/admin/orders/order/${o.id}/change/" style="color:#8B5CF6;font-size:12px;font-weight:700;">Edit</a></td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+async function loadLowStock() {
+  try {
+    const r = await fetch('/admin/core/low-stock/');
+    const d = await r.json();
+    const el = document.getElementById('lowStockTable');
+    if (!d.products?.length) { el.innerHTML='<tr><td colspan="4" style="color:#16A34A;font-weight:700;">✓ All products have sufficient stock</td></tr>'; return; }
+    el.innerHTML = d.products.map(p => `
+      <tr>
+        <td class="bold">${p.name_en}</td>
+        <td style="font-family:monospace;color:#71717A;">${p.sku}</td>
+        <td><span style="color:${p.stock===0?'#DC2626':'#D97706'};font-weight:900;">${p.stock===0?'OUT OF STOCK':p.stock+' left'}</span></td>
+        <td><a href="/admin/products/product/${p.id}/change/" style="color:#8B5CF6;font-size:12px;font-weight:700;">Update Stock</a></td>
+      </tr>`).join('');
+  } catch(e) {}
+}
+
+function formatNum(n) {
+  const num = parseFloat(n||0);
+  if (num >= 1000000) return (num/1000000).toFixed(1)+'M';
+  if (num >= 1000) return (num/1000).toFixed(1)+'K';
+  return Math.round(num).toString();
+}
+
+// Load on page open
+loadData(7, document.querySelector('.period-btn'));
+</script>
+{% endblock %}

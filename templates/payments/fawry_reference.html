@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "Fawry Payment" %}{% endblock %}
+{% block content %}
+<div class="max-w-lg mx-auto px-4 py-16 text-center">
+  <div class="text-7xl mb-6">🏦</div>
+  <h1 class="text-3xl font-black text-text-primary mb-4">{% if LANGUAGE_CODE == 'ar' %}Fawry Reference{% else %}رقم مرجع فوري{% endif %}</h1>
+  <p class="text-text-muted mb-6">{% trans "Use this reference number to pay at any Fawry outlet within 24 hours." %}</p>
+  <div class="card p-8 mb-6">
+    <div class="text-text-muted text-sm mb-2">{% if LANGUAGE_CODE == 'ar' %}Reference Number{% else %}رقم المرجع{% endif %}</div>
+    <div class="text-4xl font-black text-primary font-mono">{{ reference }}</div>
+    <div class="text-text-muted text-sm mt-4">{% trans "Order" %}: <strong>{{ order.order_number }}</strong></div>
+    <div class="text-text-muted text-sm">{% if LANGUAGE_CODE == 'ar' %}Amount{% else %}المبلغ{% endif %}: <strong>{{ order.total }} EGP</strong></div>
+  </div>
+  <a href="{% url 'orders:order_success' order.order_number %}" class="btn-primary">{% if LANGUAGE_CODE == 'ar' %}View Order{% else %}عرض الطلب{% endif %}</a>
+</div>
+{% endblock %}

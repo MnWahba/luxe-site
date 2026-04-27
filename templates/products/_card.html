@@ -1,0 +1,64 @@
+{% load i18n %}
+<div class="product-card">
+  <div class="product-img">
+    {% with product.get_primary_image as img %}
+    {% if img %}
+    <img data-src="{{ img.image.url }}" alt="{{ product.get_name }}" src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"/>
+    {% else %}
+    <div class="img-placeholder">👜</div>
+    {% endif %}
+    {% endwith %}
+
+    <div class="badges">
+      {% if product.discount_percentage > 0 %}<span class="badge badge-secondary">-{{ product.discount_percentage }}%</span>{% endif %}
+      {% if product.is_new_arrival %}<span class="badge badge-success">NEW</span>{% endif %}
+      {% if not product.is_in_stock %}<span class="badge badge-danger">{% if LANGUAGE_CODE == 'ar' %}Sold Out{% else %}نفد{% endif %}</span>{% endif %}
+    </div>
+
+    {% if user.is_authenticated %}
+    <div class="action-btn">
+      <form action="{% url 'products:toggle_wishlist' product.id %}" method="post">
+        {% csrf_token %}
+        <button type="submit" class="btn btn-ghost btn-icon btn-sm"
+          style="background:rgba(9,9,11,0.8);backdrop-filter:blur(8px);color:var(--t2);"
+          aria-label="{% if LANGUAGE_CODE == 'ar' %}Wishlist{% else %}المفضلة{% endif %}">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+        </button>
+      </form>
+    </div>
+    {% endif %}
+  </div>
+
+  <div class="product-body">
+    <a href="{% url 'products:detail' product.slug %}" style="text-decoration:none;display:block;">
+      <div class="product-cat">{{ product.category.get_name }}</div>
+      <div class="product-name">{{ product.get_name }}</div>
+    </a>
+
+    {% if product.review_count > 0 %}
+    <div style="display:flex;align-items:center;gap:4px;margin-bottom:8px;">
+      {% for i in "12345" %}<svg width="12" height="12" fill="{% if forloop.counter <= product.average_rating %}var(--warning){% else %}var(--s3){% endif %}" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>{% endfor %}
+      <span style="font-size:11px;color:var(--t3);margin-left:2px;">({{ product.review_count }})</span>
+    </div>
+    {% endif %}
+
+    <div class="product-footer">
+      <div class="product-price">
+        {% if product.discount_price %}
+        <span class="price-main">{{ product.discount_price }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+        <span class="price-old">{{ product.price }}</span>
+        {% else %}
+        <span class="price-main">{{ product.price }} {% if LANGUAGE_CODE == 'ar' %}EGP{% else %}ج.م{% endif %}</span>
+        {% endif %}
+      </div>
+      {% if product.is_in_stock %}
+      <form action="{% url 'orders:cart_add' product.id %}" method="post">
+        {% csrf_token %}<input type="hidden" name="quantity" value="1"/>
+        <button type="submit" class="btn btn-primary btn-icon btn-sm" aria-label="{% trans 'Add to cart' %}">
+          <svg width="16" height="16" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M12 4v16m8-8H4"/></svg>
+        </button>
+      </form>
+      {% endif %}
+    </div>
+  </div>
+</div>

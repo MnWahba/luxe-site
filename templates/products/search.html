@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}Search{% else %}بحث{% endif %}{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <form action="{% url 'products:search' %}" method="get" class="mb-8">
+    <div class="flex gap-3 max-w-2xl">
+      <input type="text" name="q" value="{{ query }}" placeholder="{% trans 'Search bags, accessories...' %}" class="form-input flex-1" autofocus/>
+      <button type="submit" class="btn-primary px-6">{% if LANGUAGE_CODE == 'ar' %}Search{% else %}بحث{% endif %}</button>
+    </div>
+  </form>
+  {% if query %}
+  <h2 class="text-xl font-bold text-text-primary mb-6">{% blocktrans with count=products.count %}{{ count }} results for "{{ query }}"{% endblocktrans %}</h2>
+  {% if products %}
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+    {% for product in products %}{% include "products/_card.html" %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-16"><div class="text-7xl mb-4">🔍</div><p class="text-text-muted">{% if LANGUAGE_CODE == 'ar' %}No products found. Try a different keyword.{% else %}لا توجد نتائج. جربي كلمة أخرى.{% endif %}</p></div>
+  {% endif %}
+  {% endif %}
+</div>
+{% endblock %}

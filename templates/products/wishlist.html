@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "My Wishlist" %}{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <h1 class="text-3xl font-black text-text-primary mb-8">❤️ {% trans "My Wishlist" %}</h1>
+  {% if items %}
+  <div class="grid grid-cols-2 md:grid-cols-4 gap-4 md:gap-6">
+    {% for item in items %}{% with product=item.product %}{% include "products/_card.html" %}{% endwith %}{% endfor %}
+  </div>
+  {% else %}
+  <div class="text-center py-24"><div class="text-8xl mb-6">🤍</div>
+  <h2 class="text-2xl font-bold text-text-primary mb-2">{% if LANGUAGE_CODE == 'ar' %}Your wishlist is empty{% else %}قائمة مفضلتك فارغة{% endif %}</h2>
+  <a href="{% url 'products:list' %}" class="btn-primary mt-4 inline-flex">{% if LANGUAGE_CODE == 'ar' %}Start Shopping{% else %}ابدأي التسوق{% endif %}</a></div>
+  {% endif %}
+</div>
+{% endblock %}

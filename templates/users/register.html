@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}Create Account{% else %}إنشاء حساب{% endif %}{% endblock %}
+{% block content %}
+<div class="min-h-screen flex items-center justify-center px-4 py-12">
+  <div class="w-full max-w-md">
+    <div class="text-center mb-8">
+      <a href="{% url 'home' %}" class="text-3xl font-black text-text-primary inline-flex items-center gap-2"><span class="text-primary text-3xl">✦</span> Fancy فانسي</a>
+      <h1 class="text-2xl font-black text-text-primary mt-4">{% if LANGUAGE_CODE == 'ar' %}Create Account{% else %}إنشاء حساب{% endif %}</h1>
+      <p class="text-text-muted mt-2">{% if LANGUAGE_CODE == 'ar' %}Join thousands of happy customers{% else %}انضمي لآلاف العميلات السعيدات{% endif %}</p>
+    </div>
+    <div class="card p-8">
+      <form method="post" novalidate>
+        {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-5 relative">
+          <label class="block text-text-muted text-sm font-semibold mb-2">{{ field.label }}</label>
+          {{ field }}
+          {% if field.errors %}<p class="text-danger text-xs mt-1.5">{{ field.errors|join:", " }}</p>{% endif %}
+        </div>
+        {% endfor %}
+        {% if form.non_field_errors %}<div class="bg-danger/10 border border-danger/30 rounded-xl p-3 mb-4 text-danger text-sm">{{ form.non_field_errors }}</div>{% endif %}
+        <button type="submit" class="btn-primary w-full text-base mt-2">{% if LANGUAGE_CODE == 'ar' %}Create Account{% else %}إنشاء حساب{% endif %}</button>
+      </form>
+      <p class="text-center text-text-muted text-sm mt-6">{% if LANGUAGE_CODE == 'ar' %}Already have an account?{% else %}لديكِ حساب بالفعل؟{% endif %} <a href="{% url 'users:login' %}" class="text-primary font-bold hover:underline">{% if LANGUAGE_CODE == 'ar' %}Login{% else %}دخول{% endif %}</a></p>
+    </div>
+  </div>
+</div>
+{% endblock %}

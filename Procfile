@@ -1,0 +1,1 @@
+web: gunicorn luxe_bags_project.wsgi

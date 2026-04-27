@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if current_category %}{{ current_category.get_name }}{% else %}{% if LANGUAGE_CODE == 'ar' %}All Products{% else %}كل المنتجات{% endif %}{% endif %}{% endblock %}
+{% block content %}
+<div class="max-w-7xl mx-auto px-4 py-8">
+  <!-- Header -->
+  <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-3xl font-black text-text-primary">{% if current_category %}{{ current_category.get_name }}{% else %}{% if LANGUAGE_CODE == 'ar' %}All Products{% else %}كل المنتجات{% endif %}{% endif %}</h1>
+      {% if search_query %}<p class="text-text-muted mt-1">{% trans "Results for" %}: "{{ search_query }}"</p>{% endif %}
+      <p class="text-text-muted text-sm mt-1">{{ page_obj.paginator.count }} {% if LANGUAGE_CODE == 'ar' %}products{% else %}منتج{% endif %}</p>
+    </div>
+    <!-- Sort -->
+    <div class="flex items-center gap-3">
+      <select onchange="window.location.href='?sort='+this.value" class="form-input w-auto text-sm py-2.5 px-4 cursor-pointer">
+        <option value="newest" {% if sort == 'newest' %}selected{% endif %}>{% if LANGUAGE_CODE == 'ar' %}Newest First{% else %}الأحدث أولاً{% endif %}</option>
+        <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>{% if LANGUAGE_CODE == 'ar' %}Price: Low to High{% else %}السعر: من الأقل{% endif %}</option>
+        <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>{% if LANGUAGE_CODE == 'ar' %}Price: High to Low{% else %}السعر: من الأعلى{% endif %}</option>
+        <option value="popular" {% if sort == 'popular' %}selected{% endif %}>{% if LANGUAGE_CODE == 'ar' %}Most Popular{% else %}الأكثر شعبية{% endif %}</option>
+      </select>
+    </div>
+  </div>
+
+  <!-- Category Pills -->
+  <div class="flex gap-2 overflow-x-auto pb-2 mb-8 scrollbar-hide">
+    <a href="{% url 'products:list' %}" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold border {% if not current_category %}bg-primary text-white border-primary{% else %}border-surface-2 text-text-muted hover:border-primary hover:text-primary{% endif %} transition-all">{% if LANGUAGE_CODE == 'ar' %}All{% else %}الكل{% endif %}</a>
+    {% for cat in categories %}
+    <a href="{% url 'products:category' cat.slug %}" class="flex-shrink-0 px-4 py-2 rounded-full text-sm font-semibold border {% if current_category.slug == cat.slug %}bg-primary text-white border-primary{% else %}border-surface-2 text-text-muted hover:border-primary hover:text-primary{% endif %} transition-all">{{ cat.get_name }}</a>
+    {% endfor %}
+  </div>
+
+  <!-- Products Grid -->
+  {% if products %}
+  <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6">
+    {% for product in products %}{% include "products/_card.html" %}{% endfor %}
+  </div>
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="flex justify-center gap-2 mt-12">
+    {% if page_obj.has_previous %}
+    <a href="?page={{ page_obj.previous_page_number }}" class="btn-outline px-5 py-2.5 min-h-0">←</a>
+    {% endif %}
+    {% for num in page_obj.paginator.page_range %}
+    <a href="?page={{ num }}" class="w-10 h-10 rounded-xl flex items-center justify-center font-bold text-sm {% if num == page_obj.number %}bg-primary text-white{% else %}bg-surface-2 text-text-muted hover:bg-primary/20{% endif %}">{{ num }}</a>
+    {% endfor %}
+    {% if page_obj.has_next %}
+    <a href="?page={{ page_obj.next_page_number }}" class="btn-outline px-5 py-2.5 min-h-0">→</a>
+    {% endif %}
+  </div>
+  {% endif %}
+  {% else %}
+  <div class="text-center py-24">
+    <div class="text-8xl mb-6">🔍</div>
+    <h2 class="text-2xl font-bold text-text-primary mb-2">{% if LANGUAGE_CODE == 'ar' %}No products found{% else %}لا توجد منتجات{% endif %}</h2>
+    <p class="text-text-muted mb-8">{% if LANGUAGE_CODE == 'ar' %}Try a different search or category{% else %}جربي بحثاً أو فئة مختلفة{% endif %}</p>
+    <a href="{% url 'products:list' %}" class="btn-primary">{% if LANGUAGE_CODE == 'ar' %}Browse All{% else %}تصفح الكل{% endif %}</a>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

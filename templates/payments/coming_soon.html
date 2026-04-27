@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% if LANGUAGE_CODE == 'ar' %}قريباً{% else %}Coming Soon{% endif %}{% endblock %}
+{% block content %}
+<div class="container" style="max-width:500px;padding-top:80px;padding-bottom:80px;text-align:center;">
+  <div style="width:80px;height:80px;border-radius:50%;background:rgba(217,119,6,0.12);display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:36px;">⚡</div>
+  <h1 style="font-size:28px;font-weight:900;color:var(--t1);margin-bottom:12px;">
+    {% if LANGUAGE_CODE == 'ar' %}قريباً!{% else %}Coming Soon!{% endif %}
+  </h1>
+  <p style="color:var(--t2);font-size:16px;line-height:1.7;margin-bottom:32px;">
+    {% if LANGUAGE_CODE == 'ar' %}
+      خدمة {{ method }} ستكون متاحة قريباً جداً.<br/>الرجاء استخدام الدفع عند الاستلام حالياً.
+    {% else %}
+      {{ method }} payment will be available very soon.<br/>Please use Cash on Delivery for now.
+    {% endif %}
+  </p>
+  <div style="display:flex;flex-direction:column;gap:12px;max-width:300px;margin:0 auto;">
+    <a href="{% url 'orders:checkout' %}" class="btn btn-primary" style="width:100%;justify-content:center;">
+      {% if LANGUAGE_CODE == 'ar' %}العودة للدفع{% else %}Back to Checkout{% endif %}
+    </a>
+    <a href="{% url 'home' %}" class="btn btn-ghost" style="width:100%;justify-content:center;">
+      {% if LANGUAGE_CODE == 'ar' %}الرئيسية{% else %}Home{% endif %}
+    </a>
+  </div>
+</div>
+{% endblock %}

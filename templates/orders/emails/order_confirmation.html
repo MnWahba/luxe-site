@@ -1,0 +1,17 @@
+<!DOCTYPE html><html><head><meta charset="UTF-8"/></head><body style="background:#09090B;color:#FAFAFA;font-family:Arial,sans-serif;padding:40px 20px;">
+<div style="max-width:600px;margin:0 auto;background:#18181B;border-radius:16px;overflow:hidden;">
+<div style="background:linear-gradient(135deg,#8B5CF6,#F43F5E);padding:32px;text-align:center;"><h1 style="color:white;margin:0;font-weight:900;">✦ Fancy فانسي</h1><p style="color:rgba(255,255,255,0.8);margin:8px 0 0;">Order Confirmed! 🎉</p></div>
+<div style="padding:32px;">
+<h2 style="color:#FAFAFA;">Hi {{ order.full_name }}!</h2>
+<p style="color:#A1A1AA;">Your order <strong style="color:#8B5CF6;">{{ order.order_number }}</strong> has been confirmed.</p>
+<div style="background:#27272A;border-radius:12px;padding:20px;margin:24px 0;">
+{% for item in order.items.all %}
+<div style="display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid #3f3f46;">
+<span style="color:#A1A1AA;">{{ item.quantity }}× {{ item.product_name }}</span>
+<span style="color:#FAFAFA;font-weight:bold;">{{ item.total }} EGP</span>
+</div>{% endfor %}
+<div style="display:flex;justify-content:space-between;padding-top:12px;font-weight:900;font-size:18px;"><span style="color:#FAFAFA;">Total</span><span style="color:#8B5CF6;">{{ order.total }} EGP</span></div>
+</div>
+<p style="color:#A1A1AA;"><strong style="color:#FAFAFA;">Shipping to:</strong> {{ order.address_line1 }}, {{ order.city }}, {{ order.governorate }}</p>
+<p style="color:#A1A1AA;"><strong style="color:#FAFAFA;">Payment:</strong> {{ order.get_payment_method_display }}</p>
+</div></div></body></html>
