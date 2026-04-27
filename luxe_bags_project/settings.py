@@ -3,8 +3,15 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 SECRET_KEY = 'django-insecure-luxebags-secret-key-change-in-production-xyz123abc'
-DEBUG = True
-ALLOWED_HOSTS = ['*']
+DEBUG = False
+ALLOWED_HOSTS = [
+    ".up.railway.app",
+    "localhost",
+    "127.0.0.1"
+]
+CSRF_TRUSTED_ORIGINS = [
+    "https://*.up.railway.app"
+]
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -131,6 +138,8 @@ SESSION_COOKIE_HTTPONLY = True
 CSRF_COOKIE_HTTPONLY = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_CONTENT_TYPE_NOSNIFF = True
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
 
 SESSION_COOKIE_AGE = 86400 * 7
 
